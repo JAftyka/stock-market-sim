@@ -7,29 +7,64 @@ import static org.junit.jupiter.api.Assertions.*;
 public class StockTest {
   
   @Test
-  void testCreate() {
-    String symbol = "CDR";
-    String name ="CD Project Red";
-    double initialPrice = 2500;
-    Stock stock = new Stock(symbol, name, initialPrice);
-    assertNotNull(stock);
-  }
+    void testConstructorAndGetters() {
+        Stock stock = new Stock("CDR", "CD Projekt", 100.0);
 
-  @Test
-  void testGetters() {
-    Stock stock = new Stock("CDR", "CD Project Red", 2500);
-    assertEquals("CDR",stock.getSymbol());
-    assertEquals("CD Project Red",stock.getName());
-    assertEquals(2500,stock.getInitialPrice());
-  }
+        assertEquals("CDR", stock.getSymbol());
+        assertEquals("CD Projekt", stock.getName());
+        assertEquals(100.0, stock.getInitialPrice());
+    }
 
-  @Test
-  void testEqualsAndHashCode() {
-    Stock stock1 = new Stock("CDR", "CD Project Red", 2500);
-    Stock stock2 = new Stock("CDR", "CD Project Red", 2000);
-    Stock stock3 = new Stock("PGE", "Polska Grupa Energetyczna", 4000);
-    assertEquals(stock1,stock2);
-    assertEquals(stock1.hashCode(), stock2.hashCode());
-    assertNotEquals(stock1,stock3);
-  }
+    @Test
+    void testEqualsSameObject() {
+        Stock stock = new Stock("CDR", "CD Projekt", 100.0);
+
+        assertEquals(stock, stock);
+    }
+
+    @Test
+    void testEqualsNull() {
+        Stock stock = new Stock("CDR", "CD Projekt", 100.0);
+
+        assertNotEquals(stock, null);
+    }
+
+    @Test
+    void testEqualsDifferentClass() {
+        Stock stock = new Stock("CDR", "CD Projekt", 100.0);
+
+        assertNotEquals(stock, "Not a stock");
+    }
+
+    @Test
+    void testEqualsSameSymbolDifferentNameAndPrice() {
+        Stock s1 = new Stock("CDR", "CD Projekt", 100.0);
+        Stock s2 = new Stock("CDR", "Some Other Name", 999.9);
+
+        assertEquals(s1, s2);
+    }
+
+    @Test
+    void testEqualsDifferentSymbol() {
+        Stock s1 = new Stock("CDR", "CD Projekt", 100.0);
+        Stock s2 = new Stock("XYZ", "X Corp", 50.0);
+
+        assertNotEquals(s1, s2);
+    }
+
+    @Test
+    void testHashCodeSameSymbol() {
+        Stock s1 = new Stock("CDR", "CD Projekt", 100.0);
+        Stock s2 = new Stock("CDR", "Another Name", 500.0);
+
+        assertEquals(s1.hashCode(), s2.hashCode());
+    }
+
+    @Test
+    void testHashCodeDifferentSymbol() {
+        Stock s1 = new Stock("CDR", "CD Projekt", 100.0);
+        Stock s2 = new Stock("XYZ", "Other", 200.0);
+
+        assertNotEquals(s1.hashCode(), s2.hashCode());
+    }
 }
