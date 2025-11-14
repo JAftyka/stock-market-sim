@@ -4,6 +4,8 @@ import com.stockmarket.Stock;
 
 public class Portfolio {
 
+    private static final int MAX_HOLDINGS = 10;
+    
     private static class StockHolding {
 
         private Stock stock;
@@ -34,7 +36,7 @@ public class Portfolio {
 
     public Portfolio(double initialCash) {
       this.cash = initialCash;
-      this.holdings = new StockHolding[10];
+      this.holdings = new StockHolding[MAX_HOLDINGS];
       this.holdingsCount = 0;
     }
 
@@ -55,7 +57,7 @@ public class Portfolio {
 
     public void addStock(Stock stock, int quantity) {
         if (stock == null || quantity <= 0) {
-            throw new IllegalArgumentException("Akcja nie może być null i ilość musi być > 0");
+            throw new IllegalArgumentException("Akcja nie może być null i ilość musi być dodatnia");
         }
         for (int i = 0; i < holdingsCount; i++) {
             if (holdings[i].getStock().equals(stock)) {
@@ -77,5 +79,18 @@ public class Portfolio {
         }
         return sum;
     }
+
+    public double calculateTotalValue() {
+        return cash + calculateStockValue();
+    }
+
+    public int getStockQuantity(Stock stock) {
+    for (int i = 0; i < holdingsCount; i++) {
+        if (holdings[i].getStock().equals(stock)) {
+            return holdings[i].getQuantity();
+        }
+    }
+    return 0;
+}
 }
 
