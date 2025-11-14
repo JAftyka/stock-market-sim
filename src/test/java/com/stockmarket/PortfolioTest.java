@@ -98,13 +98,10 @@ class PortfolioTest {
     @Test
     void testAddStockWhenPortfolioIsFullThrowsException() {
         Portfolio portfolio = new Portfolio(500.0);
-
-        // Create 10 different stocks
+        
         for (int i = 0; i < 10; i++) {
             portfolio.addStock(new Stock("S" + i, "Stock" + i, 10.0), 1);
         }
-
-        // Attempt to add the 11th stock should fail
         Stock extra = new Stock("EXTRA", "Extra Stock", 5.0);
         assertThrows(IllegalStateException.class, () -> portfolio.addStock(extra, 1));
     }
