@@ -151,7 +151,7 @@ class PortfolioTest {
     void testAddStockWhenPortfolioIsFullThrowsException() {
         Portfolio portfolio = new Portfolio(500.0);
         
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < portfolio.MAX_HOLDINGS; i++) {
             portfolio.addStock(new Stock("S" + i, "Stock" + i, 10.0), 1);
         }
         Stock extra = new Stock("EXTRA", "Extra Stock", 5.0);
