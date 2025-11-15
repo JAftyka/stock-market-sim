@@ -69,12 +69,28 @@ class PortfolioTest {
         Portfolio portfolio = new Portfolio(500.0);
         Stock s1 = new Stock("CDR", "CD Projekt", 100.0);
         Stock s2 = new Stock("PLW", "PlayWay", 50.0);
-
         portfolio.addStock(s1, 1);
         portfolio.addStock(s2, 2);
-
         assertEquals(2, portfolio.getHoldingsCount());
+    }
+
+    @Test
+    void testGetStockQuantityOnTwoDifferentStocksNr1() {
+        Portfolio portfolio = new Portfolio(500.0);
+        Stock s1 = new Stock("CDR", "CD Projekt", 100.0);
+        Stock s2 = new Stock("PLW", "PlayWay", 50.0);
+        portfolio.addStock(s1, 1);
+        portfolio.addStock(s2, 2);
         assertEquals(1, portfolio.getStockQuantity(s1));
+    }
+
+    @Test
+    void testGetStockQuantityOnTwoDifferentStocksNr2() {
+        Portfolio portfolio = new Portfolio(500.0);
+        Stock s1 = new Stock("CDR", "CD Projekt", 100.0);
+        Stock s2 = new Stock("PLW", "PlayWay", 50.0);
+        portfolio.addStock(s1, 1);
+        portfolio.addStock(s2, 2);
         assertEquals(2, portfolio.getStockQuantity(s2));
     }
 
@@ -83,7 +99,6 @@ class PortfolioTest {
         Portfolio portfolio = new Portfolio(0.0);
         Stock s1 = new Stock("CDR", "CD Projekt", 100.0);
         Stock s2 = new Stock("PLW", "PlayWay", 50.0);
-
         portfolio.addStock(s1, 2); // 200
         portfolio.addStock(s2, 3); // 150
         assertEquals(350.0, portfolio.calculateStockValue(), 0.0001);
@@ -95,6 +110,13 @@ class PortfolioTest {
         Stock stock = new Stock("CDR", "CD Projekt", 100.0);
         portfolio.addStock(stock, 3); // 300
         assertEquals(300.0, portfolio.calculateStockValue(), 0.0001);
+    }
+
+    @Test
+    void testCalculateTotalValueWithOneAddedStock() {
+        Portfolio portfolio = new Portfolio(100.0);
+        Stock stock = new Stock("CDR", "CD Projekt", 100.0);
+        portfolio.addStock(stock, 3); // 300
         assertEquals(400.0, portfolio.calculateTotalValue(), 0.0001);
     }
 
@@ -122,7 +144,6 @@ class PortfolioTest {
     @Test
     void testAddStockWithNullStockThrowsException() {
         Portfolio portfolio = new Portfolio(500.0);
-        Stock stock = new Stock("CDR", "CD Projekt", 100.0);
         assertThrows(IllegalArgumentException.class, () -> portfolio.addStock(null, 1));
     }
 
@@ -138,10 +159,14 @@ class PortfolioTest {
     }
 
     @Test
-    void testGetHoldingThrowsIndexException() {
+    void testGetHoldingWithIndex0ThrowsIndexException() {
         Portfolio portfolio = new Portfolio(500.0);
-
         assertThrows(IndexOutOfBoundsException.class, () -> portfolio.getHolding(0));
+    }
+
+    @Test
+    void testGetHoldingWithNegativeIndexThrowsIndexException() {
+        Portfolio portfolio = new Portfolio(500.0);
         assertThrows(IndexOutOfBoundsException.class, () -> portfolio.getHolding(-1));
     }
 }
