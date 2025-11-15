@@ -15,7 +15,7 @@ public class Portfolio {
             this.stock = stock;
             this.quantity = quantity;
         }
-
+        
         public Stock getStock() {
             return this.stock;
         }
@@ -40,6 +40,10 @@ public class Portfolio {
       this.holdingsCount = 0;
     }
 
+    public int getMaxHoldings() {
+        return MAX_HOLDINGS;
+    }
+    
     public double getCash() {
         return this.cash;
     }
