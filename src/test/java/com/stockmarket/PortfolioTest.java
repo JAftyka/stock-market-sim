@@ -7,35 +7,60 @@ import static org.junit.jupiter.api.Assertions.*;
 class PortfolioTest {
 
     @Test
-    void testEmptyPortfolio() {
+    void testGetCash() {
         Portfolio portfolio = new Portfolio(1000.0);
-
         assertEquals(1000.0, portfolio.getCash());
+    }
+
+    @Test
+    void testGetHoldingsCountOnEmptyPortfolio() {
+        Portfolio portfolio = new Portfolio(1000.0);
         assertEquals(0, portfolio.getHoldingsCount());
+    }
+
+    @Test
+    void testCalculateStockValueOnEmptyPortfolio() {
+        Portfolio portfolio = new Portfolio(1000.0);
         assertEquals(0.0, portfolio.calculateStockValue());
+    }
+
+    @Test
+    void testCalculateTotalValueOnEmptyPortfolio() {
+        Portfolio portfolio = new Portfolio(1000.0);
         assertEquals(1000.0, portfolio.calculateTotalValue());
     }
 
     @Test
-    void testAddFirstStock() {
+    void testGetHoldingsCountWithAddedStock() {
         Portfolio portfolio = new Portfolio(500.0);
         Stock stock = new Stock("CDR", "CD Projekt", 100.0);
-
         portfolio.addStock(stock, 2);
-
         assertEquals(1, portfolio.getHoldingsCount());
+    }
+    
+    @Test
+    void testGetStockQuantity() {
+        Portfolio portfolio = new Portfolio(500.0);
+        Stock stock = new Stock("CDR", "CD Projekt", 100.0);
+        portfolio.addStock(stock, 2);
         assertEquals(2, portfolio.getStockQuantity(stock));
     }
 
     @Test
-    void testAddSameStockMultipleTimesSumsQuantities() {
+    void testGetHoldingsCountWithSameStockAddedMultipleTimes() {
         Portfolio portfolio = new Portfolio(500.0);
         Stock stock = new Stock("CDR", "CD Projekt", 100.0);
-
         portfolio.addStock(stock, 2);
         portfolio.addStock(stock, 3);
-
         assertEquals(1, portfolio.getHoldingsCount());
+    }
+
+    @Test
+    void testGetStockQuantityWithSameStockAddedMultipleTimes() {
+        Portfolio portfolio = new Portfolio(500.0);
+        Stock stock = new Stock("CDR", "CD Projekt", 100.0);
+        portfolio.addStock(stock, 2);
+        portfolio.addStock(stock, 3);
         assertEquals(5, portfolio.getStockQuantity(stock));
     }
 
