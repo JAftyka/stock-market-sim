@@ -9,7 +9,7 @@ class PortfolioTest {
     @Test
     void testGetCash() {
         Portfolio portfolio = new Portfolio(1000.0);
-        assertEquals(1000.0, portfolio.getCash());
+        assertEquals(1000.0, portfolio.getCash(), 0.0001);
     }
 
     @Test
@@ -21,13 +21,13 @@ class PortfolioTest {
     @Test
     void testCalculateStockValueOnEmptyPortfolio() {
         Portfolio portfolio = new Portfolio(1000.0);
-        assertEquals(0.0, portfolio.calculateStockValue());
+        assertEquals(0.0, portfolio.calculateStockValue(), 0.0001);
     }
 
     @Test
     void testCalculateTotalValueOnEmptyPortfolio() {
         Portfolio portfolio = new Portfolio(1000.0);
-        assertEquals(1000.0, portfolio.calculateTotalValue());
+        assertEquals(1000.0, portfolio.calculateTotalValue(), 0.0001);
     }
 
     @Test
