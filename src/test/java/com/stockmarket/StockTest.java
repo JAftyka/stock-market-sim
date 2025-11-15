@@ -21,7 +21,7 @@ public class StockTest {
   @Test
     void testGetInitialPrice() {
         Stock stock = new Stock("CDR", "CD Projekt", 100.0);
-        assertEquals(100.0, stock.getInitialPrice());
+        assertEquals(100.0, stock.getInitialPrice(), 0.0001);
     }
 
     @Test
