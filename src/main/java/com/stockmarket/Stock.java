@@ -8,9 +8,18 @@ public class Stock {
   private double initialPrice;
 
   public Stock(String symbol, String name, double initialPrice) {
-    this.symbol = symbol;
+    if (symbol == null) {
+      throw new IllegalArgumentException("Symbol cannot be null"); } 
+    this.symbol = symbol; 
+    if (name == null) { 
+      throw new IllegalArgumentException("Name cannot be null"); 
+    } 
     this.name = name;
+    if (initialPrice < 0) {
+      throw new IllegalArgumentException("Initial price cannot be negative");
+    }
     this.initialPrice = initialPrice;
+
   }
   public String getSymbol() {
     return this.symbol;
