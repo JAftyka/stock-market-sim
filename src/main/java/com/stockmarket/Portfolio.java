@@ -1,3 +1,5 @@
+//dodać walidacje w StockHolding i addStock
+
 package com.stockmarket;
 
 import com.stockmarket.Stock;

@@ -48,7 +48,7 @@ public class StockTest {
   @Test
   void testEqualsNull() {
     Stock stock = new Stock("CDR", "CD Projekt", 100.0);
-    assertNotEquals(stock, null);
+    assertNotEquals(null, stock);
   }
 
   @Test
