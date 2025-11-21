@@ -1,5 +1,3 @@
-//dodać walidacje w StockHolding i addStock
-
 package com.stockmarket;
 
 import com.stockmarket.Stock;
@@ -14,6 +12,12 @@ public class Portfolio {
         private int quantity;
 
         public StockHolding(Stock stock, int quantity) {
+            if (stock == null) {
+                throw new IllegalArgumentException("Stock cannot be null");
+            }
+            if (quantity <= 0) {
+                throw new IllegalArgumentException("Quantity must be positive");
+            }
             this.stock = stock;
             this.quantity = quantity;
         }
@@ -27,7 +31,9 @@ public class Portfolio {
         }
 
         public void addQuantity(int quantity) {
-
+            if (quantity <= 0) {
+                throw new IllegalArgumentException("Quantity to add must be positive");
+            }
             this.quantity += quantity;
         }
     }
@@ -37,9 +43,12 @@ public class Portfolio {
     private int holdingsCount;
 
     public Portfolio(double initialCash) {
-      this.cash = initialCash;
-      this.holdings = new StockHolding[MAX_HOLDINGS];
-      this.holdingsCount = 0;
+        if (initialCash<0) {
+            throw new IllegalArgumentException("Initial cash cannot be negative");
+        }
+        this.cash = initialCash;
+        this.holdings = new StockHolding[MAX_HOLDINGS];
+        this.holdingsCount = 0;
     }
 
     public int getMaxHoldings() {
@@ -52,7 +61,7 @@ public class Portfolio {
 
     public StockHolding getHolding(int index) {
         if (index < 0 || index >= holdingsCount) {
-            throw new IndexOutOfBoundsException("Niepoprawny indeks");
+            throw new IndexOutOfBoundsException("Invalid index");
         }
         return holdings[index];
     }
@@ -62,8 +71,11 @@ public class Portfolio {
     }
 
     public void addStock(Stock stock, int quantity) {
-        if (stock == null || quantity <= 0) {
-            throw new IllegalArgumentException("Akcja nie może być null i ilość musi być dodatnia");
+        if (stock == null) {
+            throw new IllegalArgumentException("Stock cannot be null");
+        }
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Quantity must be positive");
         }
         for (int i = 0; i < holdingsCount; i++) {
             if (holdings[i].getStock().equals(stock)) {
@@ -71,8 +83,8 @@ public class Portfolio {
                 return;
             }
         }
-        if (holdingsCount >= holdings.length) {
-            throw new IllegalStateException("Portfel pełny, nie można dodać więcej pozycji");
+        if (holdingsCount >= MAX_HOLDINGS) {
+            throw new IllegalStateException("StockHolding is full, cannot add more holdings");
         }
         holdings[holdingsCount] = new StockHolding(stock, quantity);
         holdingsCount++;
@@ -91,6 +103,9 @@ public class Portfolio {
     }
 
     public int getStockQuantity(Stock stock) {
+    if (stock == null) {
+        throw new IllegalArgumentException("Stock cannot be null");
+    }
     for (int i = 0; i < holdingsCount; i++) {
         if (holdings[i].getStock().equals(stock)) {
             return holdings[i].getQuantity();
