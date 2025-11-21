@@ -19,16 +19,32 @@ public class Stock {
       throw new IllegalArgumentException("Initial price cannot be negative");
     }
     this.initialPrice = initialPrice;
-
   }
+  
   public String getSymbol() {
     return this.symbol;
   }
+  
   public String getName() {
     return this.name;
   }
+  
   public double getInitialPrice() {
     return this.initialPrice;
+  }
+
+  public void setName(String name) {
+    if (name == null) {
+      throw new IllegalArgumentException("Name cannot be null");
+    }
+    this.name = name;
+  }
+
+  public void setInitialPrice(double initialPrice) {
+    if (initialPrice < 0) {
+      throw new IllegalArgumentException("Initial price cannot be negative");
+    }
+    this.initialPrice = initialPrice;
   }
   
   @Override
