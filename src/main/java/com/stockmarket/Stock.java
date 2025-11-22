@@ -3,7 +3,7 @@ package com.stockmarket;
 import java.util.Objects;
 
 public class Stock {
-  private String symbol;
+  private final String symbol;
   private String name;
   private double initialPrice;
 
@@ -50,7 +50,7 @@ public class Stock {
   @Override
   public boolean equals(Object obj) {
     if (this == obj) return true;           //true jesli to ten sam obiekt
-    if (obj == null || getClass() != obj.getClass()) return false; //false jesli pusty lub inny typ
+    if (obj == null || getClass() != obj.getClass()) return false; //false jesli null lub inny typ
     Stock other = (Stock) obj;
     return Objects.equals(this.symbol, other.symbol); //sprawdzam czy symbole sa takie same
   }
