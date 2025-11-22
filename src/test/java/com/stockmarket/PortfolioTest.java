@@ -31,6 +31,11 @@ class PortfolioTest {
     }
 
     @Test
+    void testInitializePortfolioWithNegativeInitialCash() {
+        assertThrows(IllegalArgumentException.class, () ->  new Portfolio(-1000.0));
+    }
+
+    @Test
     void testGetHoldingsCountWithAddedStock() {
         Portfolio portfolio = new Portfolio(500.0);
         Stock stock = new Stock("CDR", "CD Projekt", 100.0);
@@ -126,6 +131,11 @@ class PortfolioTest {
         Stock stock = new Stock("CDR", "CD Projekt", 100.0);
         assertEquals(0, portfolio.getStockQuantity(stock));
     }
+    @Test
+    void testGetStockQuantityForNullStockThrowsException() {
+        Portfolio portfolio = new Portfolio(500.0);
+        assertThrows(IllegalArgumentException.class, () -> portfolio.getStockQuantity(null));
+    }
 
     @Test
     void testAddStockWith0QuantityThrowsException() {
@@ -156,6 +166,22 @@ class PortfolioTest {
         }
         Stock extra = new Stock("EXTRA", "Extra Stock", 5.0);
         assertThrows(IllegalStateException.class, () -> portfolio.addStock(extra, 1));
+    }
+
+    @Test
+    void testGetHoldingQuantity() {
+        Portfolio portfolio = new Portfolio(500.0);
+        Stock stock = new Stock("CDR", "CD Projekt", 100.0);
+        portfolio.addStock(stock, 3);
+        assertEquals(3, portfolio.getStockQuantity(stock));
+    }
+
+    @Test
+    void testGetHoldingValue() {
+        Portfolio portfolio = new Portfolio(500.0);
+        Stock stock = new Stock("CDR", "CD Projekt", 100.0);
+        portfolio.addStock(stock, 3);
+        assertEquals(300.0, portfolio.calculateStockValue(), 0.0001);
     }
 
     @Test
