@@ -1,6 +1,5 @@
 package com.stockmarket;
 
-import com.stockmarket.Portfolio;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -185,7 +184,7 @@ class PortfolioTest {
     }
 
     @Test
-    void testGetHoldingWithIndex0ThrowsIndexException() {
+    void testGetHoldingWithIndex0OnEmptyPortfolioThrowsIndexException() {
         Portfolio portfolio = new Portfolio(500.0);
         assertThrows(IndexOutOfBoundsException.class, () -> portfolio.getHolding(0));
     }
@@ -194,5 +193,13 @@ class PortfolioTest {
     void testGetHoldingWithNegativeIndexThrowsIndexException() {
         Portfolio portfolio = new Portfolio(500.0);
         assertThrows(IndexOutOfBoundsException.class, () -> portfolio.getHolding(-1));
+    }
+
+    @Test
+    void testGetHoldingIndexOutOfBoundsThrowsIndexException() {
+        Portfolio portfolio = new Portfolio(500.0);
+        Stock stock = new Stock("CDR", "CD Projekt", 100.0);
+        portfolio.addStock(stock, 5);
+        assertThrows(IndexOutOfBoundsException.class, () -> portfolio.getHolding(1));
     }
 }
