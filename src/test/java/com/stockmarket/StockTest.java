@@ -34,6 +34,32 @@ public class StockTest {
   }
 
   @Test
+  void testSetName() {
+      Stock stock = new Stock("CDR", "CD Projekt", 100.0);
+      stock.setName("CD Projekt Red");
+      assertEquals("CD Projekt Red", stock.getName());
+  }
+
+  @Test
+  void testSetNameWithNullName() {
+      Stock stock = new Stock("CDR", "CD Projekt", 100.0);
+      assertThrows(IllegalArgumentException.class, () -> stock.setName(null));
+  }
+
+  @Test
+  void testSetInitialPrice() {
+      Stock stock = new Stock("CDR", "CD Projekt", 100.0);
+      stock.setInitialPrice(500.0);
+      assertEquals(500, stock.getInitialPrice());
+  }
+
+  @Test
+  void testSetNameWithNegativePrice() {
+      Stock stock = new Stock("CDR", "CD Projekt", 100.0);
+      assertThrows(IllegalArgumentException.class, () -> stock.setInitialPrice(-100.00));
+  }
+
+  @Test
   void testGetInitialPrice() {
     Stock stock = new Stock("CDR", "CD Projekt", 100.0);
     assertEquals(100.0, stock.getInitialPrice(), 0.0001);
