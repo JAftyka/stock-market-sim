@@ -7,17 +7,17 @@ import static org.junit.jupiter.api.Assertions.*;
 public class StockTest {
 
   @Test
-  void testInitializeStockWithNullSymbol() {
+  void testInitializeStockWithNullSymbolThrowsException() {
     assertThrows(IllegalArgumentException.class, () -> new Stock(null, "Name", 100.0));
   }
 
   @Test
-  void testInitializeStockWithNullName() {
+  void testInitializeStockWithNullNameThrowsException() {
     assertThrows(IllegalArgumentException.class, () -> new Stock("SYM", null, 100.0));
   }
 
   @Test
-  void testInitializeStockWithNegativeInitialPrice() {
+  void testInitializeStockWithNegativeInitialPriceThrowsException() {
     assertThrows(IllegalArgumentException.class, () -> new Stock("SYM", "Name", -10.0));
   }
   
@@ -41,7 +41,7 @@ public class StockTest {
   }
 
   @Test
-  void testSetNameWithNullName() {
+  void testSetNameWithNullNameThrowsException() {
       Stock stock = new Stock("CDR", "CD Projekt", 100.0);
       assertThrows(IllegalArgumentException.class, () -> stock.setName(null));
   }
@@ -54,7 +54,7 @@ public class StockTest {
   }
 
   @Test
-  void testSetNameWithNegativePrice() {
+  void testSetNameWithNegativePriceThrowsException() {
       Stock stock = new Stock("CDR", "CD Projekt", 100.0);
       assertThrows(IllegalArgumentException.class, () -> stock.setInitialPrice(-100.00));
   }
@@ -69,6 +69,13 @@ public class StockTest {
   void testEqualsSameObject() {
     Stock stock = new Stock("CDR", "CD Projekt", 100.0);
     assertEquals(stock, stock);
+  }
+
+  @Test
+  void testEqualsBothStocksAreEqual() {
+      Stock s1 = new Stock("CDR", "Name1", 100.0);
+      Stock s2 = new Stock("CDR", "Name2", 200.0);
+      assertTrue(s1.equals(s2) && s2.equals(s1));
   }
 
   @Test
