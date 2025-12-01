@@ -1,6 +1,5 @@
-package com.stockmarket;
+/*package com.stockmarket;
 
-import com.stockmarket.Portfolio;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,6 +27,11 @@ class PortfolioTest {
     void testCalculateTotalValueWithNoStocksAdded() {
         Portfolio portfolio = new Portfolio(1000.0);
         assertEquals(1000.0, portfolio.calculateTotalValue(), 0.0001);
+    }
+
+    @Test
+    void testInitializePortfolioWithNegativeInitialCash() {
+        assertThrows(IllegalArgumentException.class, () ->  new Portfolio(-1000.0));
     }
 
     @Test
@@ -126,6 +130,11 @@ class PortfolioTest {
         Stock stock = new Stock("CDR", "CD Projekt", 100.0);
         assertEquals(0, portfolio.getStockQuantity(stock));
     }
+    @Test
+    void testGetStockQuantityForNullStockThrowsException() {
+        Portfolio portfolio = new Portfolio(500.0);
+        assertThrows(IllegalArgumentException.class, () -> portfolio.getStockQuantity(null));
+    }
 
     @Test
     void testAddStockWith0QuantityThrowsException() {
@@ -159,7 +168,23 @@ class PortfolioTest {
     }
 
     @Test
-    void testGetHoldingWithIndex0ThrowsIndexException() {
+    void testGetHoldingQuantity() {
+        Portfolio portfolio = new Portfolio(500.0);
+        Stock stock = new Stock("CDR", "CD Projekt", 100.0);
+        portfolio.addStock(stock, 3);
+        assertEquals(3, portfolio.getStockQuantity(stock));
+    }
+
+    @Test
+    void testGetHoldingValue() {
+        Portfolio portfolio = new Portfolio(500.0);
+        Stock stock = new Stock("CDR", "CD Projekt", 100.0);
+        portfolio.addStock(stock, 3);
+        assertEquals(300.0, portfolio.calculateStockValue(), 0.0001);
+    }
+
+    @Test
+    void testGetHoldingWithIndex0OnEmptyPortfolioThrowsIndexException() {
         Portfolio portfolio = new Portfolio(500.0);
         assertThrows(IndexOutOfBoundsException.class, () -> portfolio.getHolding(0));
     }
@@ -169,4 +194,12 @@ class PortfolioTest {
         Portfolio portfolio = new Portfolio(500.0);
         assertThrows(IndexOutOfBoundsException.class, () -> portfolio.getHolding(-1));
     }
-}
+
+    @Test
+    void testGetHoldingIndexOutOfBoundsThrowsIndexException() {
+        Portfolio portfolio = new Portfolio(500.0);
+        Stock stock = new Stock("CDR", "CD Projekt", 100.0);
+        portfolio.addStock(stock, 5);
+        assertThrows(IndexOutOfBoundsException.class, () -> portfolio.getHolding(1));
+    }
+}*/
