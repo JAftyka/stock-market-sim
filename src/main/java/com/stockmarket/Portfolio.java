@@ -1,29 +1,29 @@
-/*package com.stockmarket;
+package com.stockmarket.logic;
 
-import com.stockmarket.Stock;
+import com.stockmarket.domain.*;
 
-public class Portfolio {
+public class Portfolio<T extends Asset> {
 
     private static final int MAX_HOLDINGS = 10;
     
-    private static class StockHolding {
+    private static class AssetHolding<T extends Asset> {
 
-        private Stock stock;
+        private T asset;
         private int quantity;
 
-        public StockHolding(Stock stock, int quantity) {
-            if (stock == null) {
-                throw new IllegalArgumentException("Stock cannot be null");
+        public AssetHolding(T asset, int quantity) {
+            if (asset == null) {
+                throw new IllegalArgumentException("Asset cannot be null");
             }
             if (quantity <= 0) {
                 throw new IllegalArgumentException("Quantity must be positive");
             }
-            this.stock = stock;
+            this.asset = asset;
             this.quantity = quantity;
         }
         
-        public Stock getStock() {
-            return this.stock;
+        public T getAsset() {
+            return this.asset;
         }
 
         public int getQuantity() {
@@ -39,7 +39,7 @@ public class Portfolio {
     }
 
     private double cash;
-    private StockHolding[] holdings;
+    private AssetHolding[] holdings;
     private int holdingsCount;
 
     public Portfolio(double initialCash) {
@@ -47,7 +47,7 @@ public class Portfolio {
             throw new IllegalArgumentException("Initial cash cannot be negative");
         }
         this.cash = initialCash;
-        this.holdings = new StockHolding[MAX_HOLDINGS];
+        this.holdings = new AssetHolding[MAX_HOLDINGS];
         this.holdingsCount = 0;
     }
 
@@ -59,7 +59,7 @@ public class Portfolio {
         return this.cash;
     }
 
-    public StockHolding getHolding(int index) {
+    public AssetHolding<T> getHolding(int index) {
         if (index < 0 || index >= holdingsCount) {
             throw new IndexOutOfBoundsException("Invalid index");
         }
@@ -70,47 +70,38 @@ public class Portfolio {
         return this.holdingsCount;
     }
 
-    public void addStock(Stock stock, int quantity) {
-        if (stock == null) {
-            throw new IllegalArgumentException("Stock cannot be null");
+    public void purchaseAsset(T asset, int quantity) {
+        if (asset == null) {
+            throw new IllegalArgumentException("Asset cannot be null");
         }
         if (quantity <= 0) {
             throw new IllegalArgumentException("Quantity must be positive");
         }
-        for (int i = 0; i < holdingsCount; i++) {
-            if (holdings[i].getStock().equals(stock)) {
-                holdings[i].addQuantity(quantity);
-                return;
+        if (asset.calculatePurchaseCost(quantity)>this.getCash()){
+            System.out.println("nuh-uh, u too poor bro");
+            throw new IllegalStateException("Insufficient cash to purchase asset");
+        }
+        else{
+            for (int i = 0; i < holdingsCount; i++) {
+                if (holdings[i].getAsset().equals(asset)) {
+                    holdings[i].addQuantity(quantity);
+                    return;
+                }
             }
         }
         if (holdingsCount >= MAX_HOLDINGS) {
-            throw new IllegalStateException("StockHolding is full, cannot add more holdings");
+            throw new IllegalStateException("AssetHolding is full, cannot add more holdings");
         }
-        holdings[holdingsCount] = new StockHolding(stock, quantity);
+        holdings[holdingsCount] = new AssetHolding(asset, quantity);
         holdingsCount++;
+        this.cash -= asset.calculatePurchaseCost(quantity);
     }
 
-    public double calculateStockValue() {
+    public double calculateTotalRealValue() {
         double sum = 0;
         for (int i = 0; i < holdingsCount; i++) {
-            sum+=holdings[i].getStock().getInitialPrice()*holdings[i].getQuantity();
+            sum+=holdings[i].getAsset().calculateRealValue(holdings[i].getQuantity());
         }
         return sum;
     }
-
-    public double calculateTotalValue() {
-        return cash + calculateStockValue();
-    }
-
-    public int getStockQuantity(Stock stock) {
-    if (stock == null) {
-        throw new IllegalArgumentException("Stock cannot be null");
-    }
-    for (int i = 0; i < holdingsCount; i++) {
-        if (holdings[i].getStock().equals(stock)) {
-            return holdings[i].getQuantity();
-        }
-    }
-    return 0;
 }
-}*/
