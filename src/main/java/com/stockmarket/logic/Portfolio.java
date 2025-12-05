@@ -2,16 +2,16 @@ package com.stockmarket.logic;
 
 import com.stockmarket.domain.*;
 
-public class Portfolio<T extends Asset> {
+public class Portfolio {
 
     private static final int MAX_HOLDINGS = 10;
     
-    private static class AssetHolding<T extends Asset> {
+    private static class AssetHolding {
 
-        private T asset;
+        private Asset asset;
         private int quantity;
 
-        public AssetHolding(T asset, int quantity) {
+        public AssetHolding(Asset asset, int quantity) {
             if (asset == null) {
                 throw new IllegalArgumentException("Asset cannot be null");
             }
@@ -22,7 +22,7 @@ public class Portfolio<T extends Asset> {
             this.quantity = quantity;
         }
         
-        public T getAsset() {
+        public Asset getAsset() {
             return this.asset;
         }
 
@@ -59,7 +59,7 @@ public class Portfolio<T extends Asset> {
         return this.cash;
     }
 
-    public AssetHolding<T> getHolding(int index) {
+    public AssetHolding getHolding(int index) {
         if (index < 0 || index >= holdingsCount) {
             throw new IndexOutOfBoundsException("Invalid index");
         }
@@ -70,7 +70,7 @@ public class Portfolio<T extends Asset> {
         return this.holdingsCount;
     }
 
-    public void purchaseAsset(T asset, int quantity) {
+    public void purchaseAsset(Asset asset, int quantity) {
         if (asset == null) {
             throw new IllegalArgumentException("Asset cannot be null");
         }
@@ -78,13 +78,13 @@ public class Portfolio<T extends Asset> {
             throw new IllegalArgumentException("Quantity must be positive");
         }
         if (asset.calculatePurchaseCost(quantity)>this.getCash()){
-            System.out.println("nuh-uh, u too poor bro");
             throw new IllegalStateException("Insufficient cash to purchase asset");
         }
         else{
             for (int i = 0; i < holdingsCount; i++) {
                 if (holdings[i].getAsset().equals(asset)) {
                     holdings[i].addQuantity(quantity);
+                    this.cash -= asset.calculatePurchaseCost(quantity);
                     return;
                 }
             }
@@ -97,7 +97,7 @@ public class Portfolio<T extends Asset> {
         this.cash -= asset.calculatePurchaseCost(quantity);
     }
 
-    public double calculateTotalRealValue() {
+    public double audit() {
         double sum = 0;
         for (int i = 0; i < holdingsCount; i++) {
             sum+=holdings[i].getAsset().calculateRealValue(holdings[i].getQuantity());

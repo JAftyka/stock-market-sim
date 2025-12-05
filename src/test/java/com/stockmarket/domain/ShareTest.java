@@ -21,6 +21,11 @@ public class ShareTest {
     }
 
     @Test
+    void testInitializeShareWithZeroInitialPriceThrowsException() {
+        assertThrows(IllegalArgumentException.class, () -> new Share("ABC", "Name", 0.0));
+    }
+
+    @Test
     void testGetSymbol() {
         Share share = new Share("ABC", "Name", 100.0);
         assertEquals("ABC", share.getSymbol());
@@ -53,6 +58,12 @@ public class ShareTest {
     }
 
     @Test
+    void testSetInitialPriceWithZeroPriceThrowsException() {
+        Share share = new Share("ABC", "Name", 100.0);
+        assertThrows(IllegalArgumentException.class, () -> share.setMarketPrice(0.0));
+    }
+
+    @Test
     void testSetInitialPriceWithNegativePriceThrowsException() {
         Share share = new Share("ABC", "Name", 100.0);
         assertThrows(IllegalArgumentException.class, () -> share.setMarketPrice(-100.00));
@@ -78,15 +89,15 @@ public class ShareTest {
     }
 
     @Test
-    void testSetHandlingFeeWithNegativeFeeThrowsException() {
-        Share share = new Share("ABC", "Name", 100.0);
-        assertThrows(IllegalArgumentException.class, () -> share.setHandlingFee(-100.00));
-    }
-
-    @Test
     void testSetHandlingFeeWithZeroFeeThrowsException() {
         Share share = new Share("ABC", "Name", 100.0);
         assertThrows(IllegalArgumentException.class, () -> share.setHandlingFee(0));
+    }
+
+    @Test
+    void testSetHandlingFeeWithNegativeFeeThrowsException() {
+        Share share = new Share("ABC", "Name", 100.0);
+        assertThrows(IllegalArgumentException.class, () -> share.setHandlingFee(-100.00));
     }
 
     @Test
