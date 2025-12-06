@@ -6,7 +6,7 @@ public class Portfolio {
 
     private static final int MAX_HOLDINGS = 10;
     
-    private static class AssetHolding {
+    private class AssetHolding {
 
         private Asset asset;
         private int quantity;
@@ -30,11 +30,12 @@ public class Portfolio {
             return this.quantity;
         }
 
-        public void addQuantity(int quantity) {
+        public boolean addQuantity(int quantity) {
             if (quantity <= 0) {
                 throw new IllegalArgumentException("Quantity to add must be positive");
             }
             this.quantity += quantity;
+            return true;
         }
     }
 
@@ -70,7 +71,7 @@ public class Portfolio {
         return this.holdingsCount;
     }
 
-    public void purchaseAsset(Asset asset, int quantity) {
+    public boolean purchaseAsset(Asset asset, int quantity) {
         if (asset == null) {
             throw new IllegalArgumentException("Asset cannot be null");
         }
@@ -80,13 +81,11 @@ public class Portfolio {
         if (asset.calculatePurchaseCost(quantity)>this.getCash()){
             throw new IllegalStateException("Insufficient cash to purchase asset");
         }
-        else{
-            for (int i = 0; i < holdingsCount; i++) {
-                if (holdings[i].getAsset().equals(asset)) {
-                    holdings[i].addQuantity(quantity);
-                    this.cash -= asset.calculatePurchaseCost(quantity);
-                    return;
-                }
+        for (int i = 0; i < holdingsCount; i++) {
+            if (holdings[i].getAsset().equals(asset)) {
+                holdings[i].addQuantity(quantity);
+                this.cash -= asset.calculatePurchaseCost(quantity);
+                return true;
             }
         }
         if (holdingsCount >= MAX_HOLDINGS) {
@@ -95,6 +94,7 @@ public class Portfolio {
         holdings[holdingsCount] = new AssetHolding(asset, quantity);
         holdingsCount++;
         this.cash -= asset.calculatePurchaseCost(quantity);
+        return true;
     }
 
     public double audit() {

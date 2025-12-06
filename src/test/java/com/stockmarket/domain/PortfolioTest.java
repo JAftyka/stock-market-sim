@@ -38,4 +38,64 @@ class PortfolioTest {
         portfolio.purchaseAsset(currency, 20);
         assertEquals(1, portfolio.getHoldingsCount());
     }
+
+    //@Test
+    //void testPurchaseAsset() {
+    //    Portfolio portfolio = new Portfolio(500);
+    //    Asset currency = new Currency("EUR", "Euro", 4.2419, 300);
+    //    portfolio.purchaseAsset(currency, 20);
+    //    assertEquals(currency,portfolio.getHolding(0).getAsset());
+    //}
+
+    //@Test
+    //void testPurchaseAssetWithExistingAsset() {
+    //    Portfolio portfolio = new Portfolio(500);
+    //    Asset currency = new Currency("EUR", "Euro", 4.2419, 300);
+    //    portfolio.purchaseAsset(currency,10);
+    //    assertEquals(1,portfolio.getHoldingsCount());
+    //}
+
+    @Test
+    void testPurchaseAssetWithNullAssetThrowsException() {
+        Portfolio portfolio = new Portfolio(500);
+        assertThrows(IllegalArgumentException.class, () -> portfolio.purchaseAsset(null,1));
+    }
+
+    @Test
+    void testPurchaseAssetWithZeroQuantityThrowsException() {
+        Portfolio portfolio = new Portfolio(500);
+        Asset currency = new Currency("EUR", "Euro", 4.2419, 300);
+        assertThrows(IllegalArgumentException.class, () -> portfolio.purchaseAsset(currency,0));
+    }
+
+    @Test
+    void testPurchaseAssetWithNegativeQuantityThrowsException() {
+        Portfolio portfolio = new Portfolio(500);
+        Asset currency = new Currency("EUR", "Euro", 4.2419, 300);
+        assertThrows(IllegalArgumentException.class, () -> portfolio.purchaseAsset(currency,-5));
+    }
+
+    @Test
+    void testGetHoldingWithNegativeIndexThrowsException() {
+        Portfolio portfolio = new Portfolio(500);
+        Asset currency = new Currency("EUR", "Euro", 4.2419, 300);
+        portfolio.purchaseAsset(currency,1);
+        assertThrows(IndexOutOfBoundsException.class, () -> portfolio.getHolding(-1));
+    }
+
+    @Test
+    void testGetHoldingWithIndexGreaterThanHoldingsCountThrowsException() {
+        Portfolio portfolio = new Portfolio(500);
+        Asset currency = new Currency("EUR", "Euro", 4.2419, 300);
+        portfolio.purchaseAsset(currency,1);
+        assertThrows(IndexOutOfBoundsException.class, () -> portfolio.getHolding(2));
+    }
+
+    //@Test
+    //void testGetHolding() {
+    //    Portfolio portfolio = new Portfolio(500);
+    //    Asset currency = new Currency("EUR", "Euro", 4.2419, 300);
+    //    portfolio.purchaseAsset(currency,1);
+    //    assertEquals(,portfolio.getHolding(0).);
+    //}
 }
