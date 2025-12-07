@@ -97,6 +97,13 @@ public class Portfolio {
         return true;
     }
 
+    public int getHoldingQuantity(int index){
+        if(index<0||index>holdingsCount) {
+            throw new IndexOutOfBoundsException("Index out of bounds");
+        }
+        return this.holdings[index].getQuantity();
+    }
+
     public double audit() {
         double sum = 0;
         for (int i = 0; i < holdingsCount; i++) {

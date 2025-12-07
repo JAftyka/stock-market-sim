@@ -15,12 +15,6 @@ class PortfolioTest {
     }
 
     @Test
-    void testGetHoldingsCountWithNoStocksAdded() {
-        Portfolio portfolio = new Portfolio(1000.0);
-        assertEquals(0, portfolio.getHoldingsCount());
-    }
-
-    @Test
     void testAuditWithNoAssetsAdded() {
         Portfolio portfolio = new Portfolio(1000.0);
         assertEquals(0.0, portfolio.audit(), 0.0001);
@@ -32,28 +26,37 @@ class PortfolioTest {
     }
 
     @Test
-    void testGetHoldingsCountWithAddedStock() {
-        Portfolio portfolio = new Portfolio(500.0);
+    void testGetHoldingsCountWithNoStocksAdded() {
+        Portfolio portfolio = new Portfolio(1000.0);
+        assertEquals(0, portfolio.getHoldingsCount());
+    }
+
+    @Test
+    void testPurchaseAsset() {
+        Portfolio portfolio = new Portfolio(500);
         Asset currency = new Currency("EUR", "Euro", 4.2419, 300);
         portfolio.purchaseAsset(currency, 20);
         assertEquals(1, portfolio.getHoldingsCount());
     }
 
-    //@Test
-    //void testPurchaseAsset() {
-    //    Portfolio portfolio = new Portfolio(500);
-    //    Asset currency = new Currency("EUR", "Euro", 4.2419, 300);
-    //    portfolio.purchaseAsset(currency, 20);
-    //    assertEquals(currency,portfolio.getHolding(0).getAsset());
-    //}
+    @Test
+    void testPurchaseMultipleDifferentAssets() {
+        Portfolio portfolio = new Portfolio(5000);
+        Asset currency = new Currency("EUR", "Euro", 4.2419, 300);
+        Asset share = new Share("CDR","CD Projekt", 100);
+        portfolio.purchaseAsset(currency,10);
+        portfolio.purchaseAsset(share,2);
+        assertEquals(2, portfolio.getHoldingsCount());
+    }
 
-    //@Test
-    //void testPurchaseAssetWithExistingAsset() {
-    //    Portfolio portfolio = new Portfolio(500);
-    //    Asset currency = new Currency("EUR", "Euro", 4.2419, 300);
-    //    portfolio.purchaseAsset(currency,10);
-    //    assertEquals(1,portfolio.getHoldingsCount());
-    //}
+    @Test
+    void testPurchaseOneAssetMultipleTimes() {
+        Portfolio portfolio = new Portfolio(5000);
+        Asset currency = new Currency("EUR", "Euro", 4.2419, 300);
+        portfolio.purchaseAsset(currency,10);
+        portfolio.purchaseAsset(currency,2);
+        assertEquals(12, portfolio.getHoldingQuantity(0));
+    }
 
     @Test
     void testPurchaseAssetWithNullAssetThrowsException() {
@@ -76,26 +79,18 @@ class PortfolioTest {
     }
 
     @Test
-    void testGetHoldingWithNegativeIndexThrowsException() {
+    void testGetHoldingQuantityWithNegativeIndexThrowsException() {
         Portfolio portfolio = new Portfolio(500);
         Asset currency = new Currency("EUR", "Euro", 4.2419, 300);
         portfolio.purchaseAsset(currency,1);
-        assertThrows(IndexOutOfBoundsException.class, () -> portfolio.getHolding(-1));
+        assertThrows(IndexOutOfBoundsException.class, () -> portfolio.getHoldingQuantity(-1));
     }
 
     @Test
-    void testGetHoldingWithIndexGreaterThanHoldingsCountThrowsException() {
+    void testGetHoldingQuantityWithIndexGreaterThanHoldingsCountThrowsException() {
         Portfolio portfolio = new Portfolio(500);
         Asset currency = new Currency("EUR", "Euro", 4.2419, 300);
         portfolio.purchaseAsset(currency,1);
-        assertThrows(IndexOutOfBoundsException.class, () -> portfolio.getHolding(2));
+        assertThrows(IndexOutOfBoundsException.class, () -> portfolio.getHoldingQuantity(2));
     }
-
-    //@Test
-    //void testGetHolding() {
-    //    Portfolio portfolio = new Portfolio(500);
-    //    Asset currency = new Currency("EUR", "Euro", 4.2419, 300);
-    //    portfolio.purchaseAsset(currency,1);
-    //    assertEquals(,portfolio.getHolding(0).);
-    //}
 }
