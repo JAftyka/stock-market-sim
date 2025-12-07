@@ -75,4 +75,61 @@ public class CommodityTest {
     public void testNegativeStorageCostThrowsException() {
         assertThrows(IllegalArgumentException.class, () -> {new Commodity("Au", "Złoto", 200.0, -10, 10);});
     }
+
+    @Test
+    public void testAddDays() {
+        Commodity commodity = new Commodity("Au", "Złoto", 200.0);
+        commodity.addToDaysHeld(2);
+        assertEquals(2,commodity.getDaysHeld());
+    }
+
+    @Test
+    public void testAddDaysWithNegativeDaysThrowsException() {
+        Commodity commodity = new Commodity("Au", "Złoto", 200.0);
+        assertThrows(IllegalArgumentException.class, () -> {commodity.addToDaysHeld(-2);});
+    }
+
+    @Test
+    public void testAddDaysWithZeroDaysThrowsException() {
+        Commodity commodity = new Commodity("Au", "Złoto", 200.0);
+        assertThrows(IllegalArgumentException.class, () -> {commodity.addToDaysHeld(0);});
+    }
+
+    @Test
+    public void testSetInitialStorageFeePerUnit() {
+        Commodity commodity = new Commodity("Au", "Złoto", 200.0);
+        commodity.setInitialStorageFeePerUnit(10);
+        assertEquals(10,commodity.getInitialStorageFeePerUnit());
+    }
+
+    @Test
+    public void testSetInitialStorageFeePerUnitWithNegativeFeeThrowsException() {
+        Commodity commodity = new Commodity("Au", "Złoto", 200.0);
+        assertThrows(IllegalArgumentException.class, () -> {commodity.setInitialStorageFeePerUnit(-10);});
+    }
+
+    @Test
+    public void testSetInitialStorageFeePerUnitWithZeroFeeThrowsException() {
+        Commodity commodity = new Commodity("Au", "Złoto", 200.0);
+        assertThrows(IllegalArgumentException.class, () -> {commodity.setInitialStorageFeePerUnit(0);});
+    }
+
+    @Test
+    public void testSetStorageCostPerUnitPerDay() {
+        Commodity commodity = new Commodity("Au", "Złoto", 200.0);
+        commodity.setStorageCostPerUnitPerDay(10);
+        assertEquals(10,commodity.getStorageCostPerUnitPerDay());
+    }
+
+    @Test
+    public void testSetStorageCostPerUnitPerDayWithNegativeCostThrowsException() {
+        Commodity commodity = new Commodity("Au", "Złoto", 200.0);
+        assertThrows(IllegalArgumentException.class, () -> {commodity.setStorageCostPerUnitPerDay(-10);});
+    }
+
+    @Test
+    public void testSetStorageCostPerUnitPerDayWithZeroCostThrowsException() {
+        Commodity commodity = new Commodity("Au", "Złoto", 200.0);
+        assertThrows(IllegalArgumentException.class, () -> {commodity.setStorageCostPerUnitPerDay(0);});
+    }
 }

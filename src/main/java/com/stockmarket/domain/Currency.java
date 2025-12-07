@@ -43,7 +43,7 @@ public class Currency extends Asset {
     @Override
     public double calculateRealValue(int quantity) {
         if (quantity <= 0) throw new IllegalArgumentException("Quantity must be positive");
-        return bidPrice() * quantity;
+        return this.bidPrice() * quantity;
     }
 
     @Override

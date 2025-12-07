@@ -60,13 +60,6 @@ public class Portfolio {
         return this.cash;
     }
 
-    public int getHoldingQuantity(int index) {
-        if (index < 0 || index >= holdingsCount) {
-            throw new IndexOutOfBoundsException("Invalid index");
-        }
-        return holdings[index].getQuantity();
-    }
-
     public int getHoldingsCount() {
         return this.holdingsCount;
     }

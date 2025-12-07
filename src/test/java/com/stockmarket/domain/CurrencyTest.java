@@ -61,6 +61,4 @@ public class CurrencyTest {
         Currency currency = new Currency("PLN/EUR", "Złoty/Euro", 4.2284, 40);
         assertThrows(IllegalArgumentException.class, () -> {currency.setSpread(50000);});
     }
-
-
 }

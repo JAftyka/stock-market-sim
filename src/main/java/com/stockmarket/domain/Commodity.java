@@ -38,8 +38,8 @@ public class Commodity extends Asset {
     }
 
     public void addToDaysHeld(int days){
-        if(days<0){
-            throw new IllegalArgumentException("Number of days cannot be negative");
+        if(days<=0){
+            throw new IllegalArgumentException("Number of days must be positive");
         }
         this.daysHeld += days;
     }

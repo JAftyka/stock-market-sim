@@ -9,6 +9,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class PortfolioTest {
 
     @Test
+    void testGetMaxHoldings() {
+        Portfolio portfolio = new Portfolio(1000.0);
+        assertEquals(10,portfolio.getMaxHoldings());
+    }
+
+    @Test
     void testGetCash() {
         Portfolio portfolio = new Portfolio(1000.0);
         assertEquals(1000.0, portfolio.getCash(), 0.0001);
