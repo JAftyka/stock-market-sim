@@ -4,7 +4,7 @@ public class Currency extends Asset {
     private int spread;
 
     public Currency(String symbol, String name, double marketPrice, int spread) {
-        super(symbol, name, marketPrice);
+        super(symbol, name, marketPrice, AssetType.CURRENCY);
         if (spread <= 0) {
             throw new IllegalArgumentException("Spread must be positive");
         }
@@ -50,5 +50,10 @@ public class Currency extends Asset {
     public double calculatePurchaseCost(int quantity) {
         if (quantity <= 0) throw new IllegalArgumentException("Quantity must be positive");
         return this.askPrice() * quantity; //spread wchodzi dopiero przy sprzedazy
+    }
+
+    @Override
+    public double calculateLotValue(PurchaseLot lot) {
+        return lot.getQuantity() * getMarketPrice();
     }
 }

@@ -1,70 +1,100 @@
 package com.stockmarket.domain;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+
 public class Commodity extends Asset {
+
     private double storageCostPerUnitPerDay;
-    private int daysHeld;
     private double initialStorageFeePerUnit;
 
     public Commodity(String symbol, String name, double marketPrice) {
-        super(symbol, name, marketPrice);
+        super(symbol, name, marketPrice, AssetType.COMMODITY);
         this.storageCostPerUnitPerDay = 5.0;
-        this.daysHeld = 0;
         this.initialStorageFeePerUnit = 20.0;
     }
 
-    public Commodity(String symbol, String name, double marketPrice, double storageCostPerUnitPerDay, int daysHeld) {
-        super(symbol, name, marketPrice);
-        if(daysHeld<0){
-            throw new IllegalArgumentException("Number of days cannot be negative");
-        }
-        if(storageCostPerUnitPerDay<=0){
+    public Commodity(String symbol, String name, double marketPrice,
+                     double storageCostPerUnitPerDay, double initialStorageFeePerUnit) {
+
+        super(symbol, name, marketPrice, AssetType.COMMODITY);
+
+        if (storageCostPerUnitPerDay <= 0) {
             throw new IllegalArgumentException("Storage cost must be positive");
         }
+        if (initialStorageFeePerUnit <= 0) {
+            throw new IllegalArgumentException("Initial storage fee must be positive");
+        }
+
         this.storageCostPerUnitPerDay = storageCostPerUnitPerDay;
-        this.daysHeld = daysHeld;
-        this.initialStorageFeePerUnit = 20.0;
+        this.initialStorageFeePerUnit = initialStorageFeePerUnit;
     }
 
-    public double getInitialStorageFeePerUnit(){
-        return this.initialStorageFeePerUnit;
-    }
-
-    public double getStorageCostPerUnitPerDay(){
+    public double getStorageCostPerUnitPerDay() {
         return this.storageCostPerUnitPerDay;
     }
 
-    public int getDaysHeld(){
-        return this.daysHeld;
-    }
-
-    public void addToDaysHeld(int days){
-        if(days<=0){
-            throw new IllegalArgumentException("Number of days must be positive");
+    public void setStorageCostPerUnitPerDay(double storageCostPerUnitPerDay) {
+        if (storageCostPerUnitPerDay <= 0) {
+            throw new IllegalArgumentException("Storage cost must be positive");
         }
-        this.daysHeld += days;
+        this.storageCostPerUnitPerDay = storageCostPerUnitPerDay;
     }
 
-    public void setInitialStorageFeePerUnit(double initialStorageFeePerUnit){
-        if(initialStorageFeePerUnit<=0){
+    public double getInitialStorageFeePerUnit() {
+        return initialStorageFeePerUnit;
+    }
+
+    public void setInitialStorageFeePerUnit(double initialStorageFeePerUnit) {
+        if (initialStorageFeePerUnit <= 0) {
             throw new IllegalArgumentException("Initial storage fee must be positive");
         }
         this.initialStorageFeePerUnit = initialStorageFeePerUnit;
     }
 
-    public void setStorageCostPerUnitPerDay(double storageCostPerUnitPerDay){
-        if(storageCostPerUnitPerDay<=0){
-            throw new IllegalArgumentException("Storage cost must be positive");
-        }
-        this.storageCostPerUnitPerDay = storageCostPerUnitPerDay;
-    }
-
+    /**
+     * Market value of a commodity does NOT include storage cost.
+     * Storage cost is an expense applied during sale (per lot).
+     */
     @Override
     public double calculateRealValue(int quantity) {
-        return quantity * this.getMarketPrice() - this.getDaysHeld() * this.getStorageCostPerUnitPerDay() * quantity;
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Quantity must be positive");
+        }
+        return quantity * getMarketPrice();
     }
 
+    /**
+     * Purchase cost for commodities includes:
+     * - unit purchase price (from the lot)
+     * - initial storage fee per unit
+     *
+     * NOTE: This method is used when creating a PurchaseLot.
+     */
     @Override
     public double calculatePurchaseCost(int quantity) {
-        return quantity * this.getMarketPrice() + this.getInitialStorageFeePerUnit()*quantity;
+        throw new UnsupportedOperationException(
+                "Commodity purchase cost must be calculated per-lot using unit purchase price");
+    }
+
+    /**
+     * Commodity-specific per-lot valuation.
+     * Used for reporting and FIFO sale calculations.
+     */
+    @Override
+    public double calculateLotValue(PurchaseLot lot) {
+        return lot.getQuantity() * getMarketPrice();
+    }
+
+    /**
+     * Computes storage cost for a specific lot.
+     * This is used during FIFO sale to reduce profit.
+     */
+    public double calculateStorageCostForLot(PurchaseLot lot, LocalDate saleDate) {
+        long daysHeld = ChronoUnit.DAYS.between(lot.getPurchaseDate(), saleDate);
+        if (daysHeld < 0) {
+            throw new IllegalArgumentException("Sale date cannot be before purchase date");
+        }
+        return daysHeld * storageCostPerUnitPerDay * lot.getQuantity();
     }
 }

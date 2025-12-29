@@ -5,7 +5,7 @@ import com.stockmarket.domain.*;
 public class Portfolio {
 
     private static final int MAX_HOLDINGS = 10;
-    
+
     private class AssetHolding {
 
         private Asset asset;
@@ -21,7 +21,7 @@ public class Portfolio {
             this.asset = asset;
             this.quantity = quantity;
         }
-        
+
         public Asset getAsset() {
             return this.asset;
         }
@@ -55,7 +55,7 @@ public class Portfolio {
     public int getMaxHoldings() {
         return MAX_HOLDINGS;
     }
-    
+
     public double getCash() {
         return this.cash;
     }

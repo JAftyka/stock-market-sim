@@ -1,69 +1,52 @@
 package com.stockmarket.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public abstract class Asset {
-    private final String symbol;
-    private String name;
-    private double marketPrice;
 
-    protected Asset(String symbol, String name, double marketPrice) {
-        if(symbol == null){
-            throw new IllegalArgumentException("Asset symbol cannot be null");
-        }
-        if(name == null){
-            throw new IllegalArgumentException("Asset name cannot be null");
-        }
-        if(marketPrice < 0){
-            throw new IllegalArgumentException("Asset market price cannot be negative");
-        }
-        if(marketPrice == 0){
-            throw new IllegalArgumentException("Asset market price cannot be zero");
-        }
+    private final String symbol;
+    private final String name;
+    private double marketPrice;
+    private final AssetType type;
+
+    protected final List<PurchaseLot> lots;
+
+    protected Asset(String symbol, String name, double marketPrice, AssetType type) {
         this.symbol = symbol;
         this.name = name;
         this.marketPrice = marketPrice;
-    }
-
-    public void setName(String name){
-        if(name == null){
-            throw new IllegalArgumentException("Asset name cannot be null");
-        }
-        this.name = name;
-    }
-    public void setMarketPrice(double marketPrice){
-        if(marketPrice < 0){
-            throw new IllegalArgumentException("Asset market price cannot be negative");
-        }
-        if(marketPrice == 0){
-            throw new IllegalArgumentException("Asset market price cannot be zero");
-        }
-        this.marketPrice = marketPrice;
-    }
-
-    public String getSymbol(){
-        return this.symbol;
-    }
-
-    public String getName(){
-        return this.name;
-    }
-
-    public double getMarketPrice(){
-        return this.marketPrice;
+        this.type = type;
+        this.lots = new ArrayList<>();
     }
 
     public abstract double calculateRealValue(int quantity);
-
     public abstract double calculatePurchaseCost(int quantity);
+    public abstract double calculateLotValue(PurchaseLot lot);
 
+    public List<PurchaseLot> getLots() {
+        return lots;
+    }
+
+    public void addLot(PurchaseLot lot) {
+        lots.add(lot);
+    }
+
+    public AssetType getType() {
+        return type;
+    }
+
+    public double getMarketPrice() {
+        return marketPrice;
+    }
 
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;           //true jesli to ten sam obiekt
         if (obj == null || getClass() != obj.getClass()) return false; //false jesli null lub inny typ
         Asset other = (Asset) obj;
-        return Objects.equals(this.symbol, other.getSymbol()); //sprawdzam czy symbole sa takie same
+        return Objects.equals(this.symbol, other.symbol); //sprawdzam czy symbole sa takie same
     }
 
     @Override
