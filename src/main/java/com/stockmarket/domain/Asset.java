@@ -1,44 +1,42 @@
 package com.stockmarket.domain;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate;
 import java.util.Objects;
 
 public abstract class Asset {
 
     private final String symbol;
     private final String name;
-    private double marketPrice;
     private final AssetType type;
-
-    protected final List<PurchaseLot> lots;
+    private double marketPrice;
+    private PurchaseLotQueue lotQueue;
 
     protected Asset(String symbol, String name, double marketPrice, AssetType type) {
         this.symbol = symbol;
         this.name = name;
-        this.marketPrice = marketPrice;
         this.type = type;
-        this.lots = new ArrayList<>();
+        this.marketPrice = marketPrice;
+        this.lotQueue = new PurchaseLotQueue();
     }
 
-    public abstract double calculateRealValue(int quantity);
-    public abstract double calculatePurchaseCost(int quantity);
     public abstract double calculateLotValue(PurchaseLot lot);
+    public abstract double calculateValueOfAllLots();
 
-    public List<PurchaseLot> getLots() {
-        return lots;
-    }
-
-    public void addLot(PurchaseLot lot) {
-        lots.add(lot);
+    public boolean addLot(LocalDate purchaseDate, int quantity, double unitPrice) {
+        if(purchaseDate==null) throw new IllegalArgumentException("Purchase date cannot be null");
+        if(quantity<=0) throw new IllegalArgumentException("Quantity must be positive");
+        if(unitPrice<=0) throw new IllegalArgumentException("Unit price must be positive");
+        PurchaseLot lot = new PurchaseLot(purchaseDate, quantity, unitPrice);
+        this.lotQueue.addLot(lot);
+        return true;
     }
 
     public AssetType getType() {
-        return type;
+        return this.type;
     }
 
     public double getMarketPrice() {
-        return marketPrice;
+        return this.marketPrice;
     }
 
     @Override

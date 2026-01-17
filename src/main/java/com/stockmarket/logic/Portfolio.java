@@ -1,70 +1,34 @@
 package com.stockmarket.logic;
-
 import com.stockmarket.domain.*;
 
+import java.util.HashMap;
+
 public class Portfolio {
-
-    private static final int MAX_HOLDINGS = 10;
-
-    private class AssetHolding {
-
-        private Asset asset;
-        private int quantity;
-
-        public AssetHolding(Asset asset, int quantity) {
-            if (asset == null) {
-                throw new IllegalArgumentException("Asset cannot be null");
-            }
-            if (quantity <= 0) {
-                throw new IllegalArgumentException("Quantity must be positive");
-            }
-            this.asset = asset;
-            this.quantity = quantity;
-        }
-
-        public Asset getAsset() {
-            return this.asset;
-        }
-
-        public int getQuantity() {
-            return this.quantity;
-        }
-
-        public boolean addQuantity(int quantity) {
-            if (quantity <= 0) {
-                throw new IllegalArgumentException("Quantity to add must be positive");
-            }
-            this.quantity += quantity;
-            return true;
-        }
-    }
+    private HashMap<String,Asset> symbolAssetMap;
 
     private double cash;
-    private AssetHolding[] holdings;
-    private int holdingsCount;
 
     public Portfolio(double initialCash) {
+        this.symbolAssetMap = new HashMap<>();
         if (initialCash<0) {
             throw new IllegalArgumentException("Initial cash cannot be negative");
         }
         this.cash = initialCash;
-        this.holdings = new AssetHolding[MAX_HOLDINGS];
-        this.holdingsCount = 0;
-    }
-
-    public int getMaxHoldings() {
-        return MAX_HOLDINGS;
     }
 
     public double getCash() {
         return this.cash;
     }
 
-    public int getHoldingsCount() {
-        return this.holdingsCount;
+    public int getAssetCount() {
+        return this.symbolAssetMap.size();
     }
 
-    public boolean purchaseAsset(Asset asset, int quantity) {
+    public Asset getAssetBySymbol(String symbol){
+        return symbolAssetMap.get(symbol);
+    }
+
+    public boolean purchaseAsset(Asset asset, int quantity, double price) {
         if (asset == null) {
             throw new IllegalArgumentException("Asset cannot be null");
         }
@@ -99,8 +63,8 @@ public class Portfolio {
 
     public double audit() {
         double sum = 0;
-        for (int i = 0; i < holdingsCount; i++) {
-            sum+=holdings[i].getAsset().calculateRealValue(holdings[i].getQuantity());
+        for (Asset asset:symbolAssetMap.values()) {
+            sum+=asset.calculateValueOfAllLots();
         }
         return sum;
     }

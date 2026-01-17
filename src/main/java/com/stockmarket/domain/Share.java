@@ -1,8 +1,5 @@
 package com.stockmarket.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Share extends Asset {
 
     private double handlingFee;
@@ -23,10 +20,6 @@ public class Share extends Asset {
         this.handlingFee = handlingFee;
     }
 
-    /**
-     * Wartość rynkowa akcji po uwzględnieniu prowizji.
-     * Akcje nie mają spreadu jak waluty, ale mają koszt obsługi.
-     */
     @Override
     public double calculateRealValue(int quantity) {
         if (quantity <= 0) {
@@ -35,9 +28,6 @@ public class Share extends Asset {
         return (quantity * getMarketPrice()) - handlingFee;
     }
 
-    /**
-     * Koszt zakupu akcji z uwzględnieniem prowizji.
-     */
     @Override
     public double calculatePurchaseCost(int quantity) {
         if (quantity <= 0) {
@@ -46,10 +36,6 @@ public class Share extends Asset {
         return (quantity * getMarketPrice()) + handlingFee;
     }
 
-    /**
-     * Akcje nie mają dodatkowych reguł podatkowych poza FIFO,
-     * więc metoda pozostaje prosta.
-     */
     @Override
     public double calculateLotValue(PurchaseLot lot) {
         return lot.getQuantity() * getMarketPrice();

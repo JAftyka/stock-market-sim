@@ -3,8 +3,8 @@ package com.stockmarket.domain;
 public class Currency extends Asset {
     private int spread;
 
-    public Currency(String symbol, String name, double marketPrice, int spread) {
-        super(symbol, name, marketPrice, AssetType.CURRENCY);
+    public Currency(String symbol, String name, int spread) {
+        super(symbol, name, AssetType.CURRENCY);
         if (spread <= 0) {
             throw new IllegalArgumentException("Spread must be positive");
         }
@@ -26,18 +26,6 @@ public class Currency extends Asset {
             throw new IllegalArgumentException("Spread cannot be greater than ask price");
         }
         this.spread = spread;
-    }
-
-    private double askPrice() {
-        return getMarketPrice();
-    }
-
-    private double bidPrice() {
-        double bid = getMarketPrice() - spread * 0.0001;
-        if (bid < 0) {
-            throw new IllegalArgumentException("Spread too large, bid price below zero");
-        }
-        return bid;
     }
 
     @Override
