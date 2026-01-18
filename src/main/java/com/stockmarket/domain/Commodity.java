@@ -53,7 +53,7 @@ public class Commodity extends Asset {
     }
 
     @Override
-    public double calculateRealValue(int quantity) {
+    public double calculateLotValue(PurchaseLot lot) {
         if (quantity <= 0) {
             throw new IllegalArgumentException("Quantity must be positive");
         }
