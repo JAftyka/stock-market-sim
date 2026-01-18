@@ -16,7 +16,7 @@ public class Transaction {
         this.type=type;
     }
 
-    public double getAsset(){
+    public Asset getAsset(){
         return this.asset;
     }
 
