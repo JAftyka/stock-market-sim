@@ -54,21 +54,25 @@ public class Commodity extends Asset {
 
     @Override
     public double calculateLotValue(PurchaseLot lot) {
-        if (quantity <= 0) {
-            throw new IllegalArgumentException("Quantity must be positive");
+        if (lot == null) {
+            throw new IllegalArgumentException("Lot cannot be null");
         }
-        return quantity * getMarketPrice();
-    }
-
-    @Override
-    public double calculatePurchaseCost(int quantity) {
-        throw new UnsupportedOperationException(
-                "Commodity purchase cost must be calculated per-lot using unit purchase price");
-    }
-
-    @Override
-    public double calculateLotValue(PurchaseLot lot) {
         return lot.getQuantity() * getMarketPrice();
+    }
+
+    @Override
+    public double calculateValueOfAllLots() {
+        double sum = 0;
+        PurchaseLotQueue queue = this.getLotQueue();
+        Iterator<this.getLotQueue()> iterator = ot.iterator();
+        while (iterator.hasNext()) {
+            Product currentProduct = iterator.next();
+            if (...) iterator.remove();
+        }
+        for (PurchaseLot lot:this.getLotQueue().//use an iterator to access the queue elements){
+            sum += lot.getQuantity() * lot.getPurchasePrice();
+        }
+        return sum;
     }
 
     public double calculateStorageCostForLot(PurchaseLot lot, LocalDate saleDate) {
@@ -76,6 +80,6 @@ public class Commodity extends Asset {
         if (daysHeld < 0) {
             throw new IllegalArgumentException("Sale date cannot be before purchase date");
         }
-        return daysHeld * storageCostPerUnitPerDay * lot.getQuantity();
+        return daysHeld * this.storageCostPerUnitPerDay * lot.getQuantity() + lot.getQuantity() * this.initialStorageFeePerUnit;
     }
 }
