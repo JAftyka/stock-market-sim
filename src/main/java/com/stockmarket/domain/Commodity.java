@@ -62,18 +62,17 @@ public class Commodity extends Asset {
 
     @Override
     public double calculateValueOfAllLots() {
-        double sum = 0;
+        double sum = 0.0;
+
         PurchaseLotQueue queue = this.getLotQueue();
-        Iterator<this.getLotQueue()> iterator = ot.iterator();
-        while (iterator.hasNext()) {
-            Product currentProduct = iterator.next();
-            if (...) iterator.remove();
-        }
-        for (PurchaseLot lot:this.getLotQueue().//use an iterator to access the queue elements){
+
+        for (PurchaseLot lot : queue) {
             sum += lot.getQuantity() * lot.getPurchasePrice();
         }
+
         return sum;
     }
+
 
     public double calculateStorageCostForLot(PurchaseLot lot, LocalDate saleDate) {
         long daysHeld = ChronoUnit.DAYS.between(lot.getPurchaseDate(), saleDate);
