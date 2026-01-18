@@ -54,11 +54,8 @@ public class Portfolio {
         return true;
     }
 
-    public int getHoldingQuantity(int index){
-        if(index<0||index>holdingsCount) {
-            throw new IndexOutOfBoundsException("Index out of bounds");
-        }
-        return this.holdings[index].getQuantity();
+    public int getAssetQuantity(Asset asset) {
+
     }
 
     public double audit() {

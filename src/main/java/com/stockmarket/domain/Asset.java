@@ -39,6 +39,10 @@ public abstract class Asset {
         return this.marketPrice;
     }
 
+    public PurchaseLotQueue getLotQueue() {
+        return this.lotQueue;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;           //true jesli to ten sam obiekt
