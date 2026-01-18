@@ -14,8 +14,8 @@ public abstract class Asset {
     protected Asset(String symbol, String name, double marketPrice, AssetType type) {
         this.symbol = symbol;
         this.name = name;
-        this.type = type;
         this.marketPrice = marketPrice;
+        this.type = type;
         this.lotQueue = new PurchaseLotQueue();
     }
 
