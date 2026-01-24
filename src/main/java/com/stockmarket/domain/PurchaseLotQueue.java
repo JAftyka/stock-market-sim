@@ -1,12 +1,13 @@
 package com.stockmarket.domain;
 
-import java.util.Comparator;
+import java.util.Iterator;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
-public class PurchaseLotQueue {
+public class PurchaseLotQueue implements Iterable<PurchaseLot> {
 
-    private final Queue<PurchaseLot> lotQueue = new PriorityQueue<>(new PurchaseLotDateComparator());
+    private final Queue<PurchaseLot> lotQueue =
+            new PriorityQueue<>(new PurchaseLotDateComparator());
 
     public PurchaseLot addLot(PurchaseLot lot) {
         lotQueue.offer(lot);
@@ -16,5 +17,9 @@ public class PurchaseLotQueue {
     public PurchaseLot getNextLot() {
         return lotQueue.poll();
     }
-}
 
+    @Override
+    public Iterator<PurchaseLot> iterator() {
+        return lotQueue.iterator();
+    }
+}

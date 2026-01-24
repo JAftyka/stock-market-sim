@@ -12,23 +12,25 @@ public abstract class Asset {
     private PurchaseLotQueue lotQueue;
 
     protected Asset(String symbol, String name, double marketPrice, AssetType type) {
+        if(symbol==null) throw new IllegalArgumentException("Asset symbol cannot be null");
+        if(name==null) throw new IllegalArgumentException("Asset name cannot be null");
+        if(marketPrice<=0) throw new IllegalArgumentException("Market price must be positive");
         this.symbol = symbol;
         this.name = name;
-        this.type = type;
         this.marketPrice = marketPrice;
+        this.type = type;
         this.lotQueue = new PurchaseLotQueue();
     }
 
     public abstract double calculateLotValue(PurchaseLot lot);
     public abstract double calculateValueOfAllLots();
 
-    public boolean addLot(LocalDate purchaseDate, int quantity, double unitPrice) {
-        if(purchaseDate==null) throw new IllegalArgumentException("Purchase date cannot be null");
-        if(quantity<=0) throw new IllegalArgumentException("Quantity must be positive");
-        if(unitPrice<=0) throw new IllegalArgumentException("Unit price must be positive");
-        PurchaseLot lot = new PurchaseLot(purchaseDate, quantity, unitPrice);
-        this.lotQueue.addLot(lot);
-        return true;
+    public String getSymbol() {
+        return this.symbol;
+    }
+
+    public String getName() {
+        return this.name;
     }
 
     public AssetType getType() {
@@ -37,6 +39,24 @@ public abstract class Asset {
 
     public double getMarketPrice() {
         return this.marketPrice;
+    }
+
+    public void setMarketPrice(double newPrice) {
+        if(newPrice<=0) throw new IllegalArgumentException("Market price must be positive");
+        this.marketPrice=newPrice;
+    }
+
+    public PurchaseLotQueue getLotQueue() {
+        return this.lotQueue;
+    }
+
+    public boolean addLot(LocalDate purchaseDate, int quantity, double unitPrice) {
+        if(purchaseDate==null) throw new IllegalArgumentException("Purchase date cannot be null");
+        if(quantity<=0) throw new IllegalArgumentException("Quantity must be positive");
+        if(unitPrice<=0) throw new IllegalArgumentException("Unit price must be positive");
+        PurchaseLot lot = new PurchaseLot(purchaseDate, quantity, unitPrice);
+        this.lotQueue.addLot(lot);
+        return true;
     }
 
     @Override

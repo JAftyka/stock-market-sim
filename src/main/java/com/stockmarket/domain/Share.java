@@ -21,6 +21,7 @@ public class Share extends Asset {
     }
 
     @Override
+    //
     public double calculateRealValue(int quantity) {
         if (quantity <= 0) {
             throw new IllegalArgumentException("Quantity must be positive");
