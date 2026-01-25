@@ -5,16 +5,15 @@ import java.util.Queue;
 
 public class TransactionManager {
 
-    private Queue<Transaction> buyQueue;
-    private Queue<Transaction> sellQueue;
+    private final PriorityQueue<Transaction> buyQueue;
+    private final PriorityQueue<Transaction> sellQueue;
 
     public TransactionManager() {
-        TransactionComparator comparator = new TransactionComparator();
-        buyQueue = new PriorityQueue<>(comparator);
-        sellQueue = new PriorityQueue<>(comparator);
+        buyQueue = new PriorityQueue<>(new BuyComparator());
+        sellQueue = new PriorityQueue<>(new SellComparator());
     }
 
-    public boolean addTransaction(Transaction transaction){
+    public boolean addTransaction(Transaction transaction) {
         if (transaction.getType() == TransactionType.BUY) {
             buyQueue.offer(transaction);
             matchOrders();
@@ -28,29 +27,32 @@ public class TransactionManager {
         return false;
     }
 
-    public boolean matchOrders(){
+    private void matchOrders() {
         while (!buyQueue.isEmpty() && !sellQueue.isEmpty()) {
 
             Transaction buy = buyQueue.peek();
             Transaction sell = sellQueue.peek();
 
-            if (buy.getLimit() >= sell.getLimit()) {
-
-                int tradedQty = Math.min(buy.getQuantity(), sell.getQuantity());
-                double tradePrice = sell.getLimit();
-
-                System.out.println("TRADE " + tradedQty + " @ " + tradePrice);
-
-                buy.setQuantity(buy.getQuantity() - tradedQty);
-                sell.setQuantity(sell.getQuantity() - tradedQty);
-
-                if (buy.getQuantity() == 0) buyQueue.poll();
-                if (sell.getQuantity() == 0) sellQueue.poll();
-
-            } else {
+            // różne aktywa → nie matchujemy
+            if (!buy.getSymbol().equals(sell.getSymbol())) {
                 break;
             }
+
+            // brak zgodności cenowej
+            if (buy.getLimit() < sell.getLimit()) {
+                break;
+            }
+
+            int tradedQty = Math.min(buy.getQuantity(), sell.getQuantity());
+            double tradePrice = sell.getLimit(); // pasywne zlecenie wyznacza cenę
+
+            System.out.println("TRADE " + tradedQty + " @ " + tradePrice);
+
+            buy.setQuantity(buy.getQuantity() - tradedQty);
+            sell.setQuantity(sell.getQuantity() - tradedQty);
+
+            if (buy.getQuantity() == 0) buyQueue.poll();
+            if (sell.getQuantity() == 0) sellQueue.poll();
         }
-        return true;
     }
 }

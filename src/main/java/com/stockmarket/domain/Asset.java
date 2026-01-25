@@ -6,7 +6,7 @@ import java.util.Objects;
 public abstract class Asset {
 
     private final String symbol;
-    private final String name;
+    private String name;
     private final AssetType type;
     private double marketPrice;
     private PurchaseLotQueue lotQueue;
@@ -41,6 +41,11 @@ public abstract class Asset {
         return this.marketPrice;
     }
 
+    public void setName(String newName){
+        if (newName==null) throw new IllegalArgumentException("Name cannot be null");
+        this.name=newName;
+    }
+
     public void setMarketPrice(double newPrice) {
         if(newPrice<=0) throw new IllegalArgumentException("Market price must be positive");
         this.marketPrice=newPrice;
@@ -57,6 +62,18 @@ public abstract class Asset {
         PurchaseLot lot = new PurchaseLot(purchaseDate, quantity, unitPrice);
         this.lotQueue.addLot(lot);
         return true;
+    }
+
+    public int getTotalQuantity() {
+        int total = 0;
+        for (PurchaseLot lot : lotQueue) {
+            total += lot.getQuantity();
+        }
+        return total;
+    }
+
+    public void removeEmptyLots() {
+        this.lotQueue.removeEmptyLots();
     }
 
     @Override

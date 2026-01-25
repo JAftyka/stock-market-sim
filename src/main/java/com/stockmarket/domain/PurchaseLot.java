@@ -28,21 +28,22 @@ public class PurchaseLot {
         return purchaseDate;
     }
 
+    public double getUnitPrice() {
+        return unitPrice;
+    }
+
     public int getQuantity() {
         return quantity;
     }
 
-    public void reduceQuantity(int amount) {
-        if (amount <= 0) {
-            throw new IllegalArgumentException("Reduction amount must be positive");
+    public void setQuantity(int quantity) {
+        if (quantity < 0) {
+            throw new IllegalArgumentException("Quantity cannot be negative");
         }
-        if (amount > quantity) {
-            throw new IllegalArgumentException("Cannot reduce more than current quantity");
-        }
-        this.quantity -= amount;
+        this.quantity = quantity;
     }
 
-    public double getUnitPrice() {
-        return unitPrice;
+    public boolean isEmpty() {
+        return this.quantity == 0;
     }
 }

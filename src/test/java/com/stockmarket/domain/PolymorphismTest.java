@@ -30,7 +30,7 @@ class PolymorphismTest {
     void testAll3HaveDifferentRealValues() {
         Asset asset1 = new Share("ABC", "Some share", 200);
         Asset asset2 = new Currency("ABC", "Some currency", 200, 40);
-        Asset asset3 = new Commodity("ABC", "Some currency", 200);
+        Asset asset3 = new Commodity("ABC", "Some commmodity", 200);
         assertFalse(asset1.equals(asset2) && asset2.equals(asset3));
     }
 }

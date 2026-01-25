@@ -41,4 +41,9 @@ public class Share extends Asset {
     public double calculateLotValue(PurchaseLot lot) {
         return lot.getQuantity() * getMarketPrice();
     }
+
+    @Override
+    public double calculateValueOfAllLots() {
+        return 0;
+    }
 }
