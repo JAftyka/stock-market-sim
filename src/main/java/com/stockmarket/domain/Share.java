@@ -20,30 +20,42 @@ public class Share extends Asset {
         this.handlingFee = handlingFee;
     }
 
-    @Override
-    //
-    public double calculateRealValue(int quantity) {
-        if (quantity <= 0) {
-            throw new IllegalArgumentException("Quantity must be positive");
-        }
-        return (quantity * getMarketPrice()) - handlingFee;
-    }
-
-    @Override
+    /**
+     * Koszt zakupu akcji (np. prowizja maklerska)
+     */
     public double calculatePurchaseCost(int quantity) {
         if (quantity <= 0) {
             throw new IllegalArgumentException("Quantity must be positive");
         }
-        return (quantity * getMarketPrice()) + handlingFee;
+        return quantity * getMarketPrice() + handlingFee;
+    }
+
+    /**
+     * Wartość sprzedaży po odjęciu prowizji
+     */
+    public double calculateRealValue(int quantity) {
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Quantity must be positive");
+        }
+        return quantity * getMarketPrice() - handlingFee;
     }
 
     @Override
     public double calculateLotValue(PurchaseLot lot) {
+        if (lot == null) {
+            throw new IllegalArgumentException("Lot cannot be null");
+        }
         return lot.getQuantity() * getMarketPrice();
     }
 
     @Override
     public double calculateValueOfAllLots() {
-        return 0;
+        double sum = 0.0;
+
+        for (PurchaseLot lot : getLotQueue()) {
+            sum += lot.getQuantity() * getMarketPrice();
+        }
+
+        return sum;
     }
 }
