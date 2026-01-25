@@ -30,19 +30,24 @@ public class Commodity extends Asset {
         this.initialStorageFeePerUnit = initialStorageFeePerUnit;
     }
 
+    public String getName() {
+        return super.getName();
+    }
+
+    public String getSymbol() {
+        return super.getSymbol();
+    }
+
+    public double getInitialStorageFeePerUnit() {
+        return this.initialStorageFeePerUnit;
+    }
+
     public double getStorageCostPerUnitPerDay() {
         return this.storageCostPerUnitPerDay;
     }
 
-    public void setStorageCostPerUnitPerDay(double storageCostPerUnitPerDay) {
-        if (storageCostPerUnitPerDay <= 0) {
-            throw new IllegalArgumentException("Storage cost must be positive");
-        }
-        this.storageCostPerUnitPerDay = storageCostPerUnitPerDay;
-    }
-
-    public double getInitialStorageFeePerUnit() {
-        return initialStorageFeePerUnit;
+    public double getMarketPrice() {
+        return super.getMarketPrice();
     }
 
     public void setInitialStorageFeePerUnit(double initialStorageFeePerUnit) {
@@ -50,6 +55,13 @@ public class Commodity extends Asset {
             throw new IllegalArgumentException("Initial storage fee must be positive");
         }
         this.initialStorageFeePerUnit = initialStorageFeePerUnit;
+    }
+
+    public void setStorageCostPerUnitPerDay(double storageCostPerUnitPerDay) {
+        if (storageCostPerUnitPerDay <= 0) {
+            throw new IllegalArgumentException("Storage cost must be positive");
+        }
+        this.storageCostPerUnitPerDay = storageCostPerUnitPerDay;
     }
 
     @Override
@@ -64,21 +76,20 @@ public class Commodity extends Asset {
     public double calculateValueOfAllLots() {
         double sum = 0.0;
 
-        PurchaseLotQueue queue = this.getLotQueue();
-
-        for (PurchaseLot lot : queue) {
-            sum += lot.getQuantity() * lot.getPurchasePrice();
+        for (PurchaseLot lot : getLotQueue()) {
+            sum += lot.getQuantity() * getMarketPrice();
         }
 
         return sum;
     }
-
 
     public double calculateStorageCostForLot(PurchaseLot lot, LocalDate saleDate) {
         long daysHeld = ChronoUnit.DAYS.between(lot.getPurchaseDate(), saleDate);
         if (daysHeld < 0) {
             throw new IllegalArgumentException("Sale date cannot be before purchase date");
         }
-        return daysHeld * this.storageCostPerUnitPerDay * lot.getQuantity() + lot.getQuantity() * this.initialStorageFeePerUnit;
+
+        return daysHeld * storageCostPerUnitPerDay * lot.getQuantity()
+                + lot.getQuantity() * initialStorageFeePerUnit;
     }
 }
