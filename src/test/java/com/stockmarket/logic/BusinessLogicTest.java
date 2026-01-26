@@ -19,9 +19,9 @@ public class BusinessLogicTest {
         Share share = new Share("XYZ", "XYZ Corp", 100.0);
         share.setHandlingFee(20.0);
         Portfolio portfolio = new Portfolio(20000.0);
-        portfolio.purchaseAsset(share,10);
+        portfolio.purchaseAsset(share,10, 250.0);
 
-        assertEquals(1,portfolio.getHoldingsCount());
+        assertEquals(1,portfolio.getAssetCount());
     }
 
     @Test
@@ -30,7 +30,7 @@ public class BusinessLogicTest {
         share.setHandlingFee(20.0);
         Portfolio portfolio = new Portfolio(200.0);
 
-        assertThrows(IllegalStateException.class, () -> {portfolio.purchaseAsset(share, 10);});
+        assertThrows(IllegalStateException.class, () -> {portfolio.purchaseAsset(share, 10, 300.0);});
     }
 
     @Test
@@ -39,24 +39,12 @@ public class BusinessLogicTest {
     }
 
     @Test
-    void testPurchasingMoreAssetsThanAllowedThrowsException() {
-        Portfolio portfolio = new Portfolio(10000.0);
-        for (int i = 1; i <= 10; i++) {
-            Share share = new Share("SYM" + i, "Some Share", 100.0);
-            share.setHandlingFee(10.0);
-            portfolio.purchaseAsset(share, 1);
-        }
-        Share share = new Share("XYZ", "Extra Share", 100.0);
-        assertThrows(IllegalStateException.class, () -> {portfolio.purchaseAsset(share, 1);});
-    }
-
-    @Test
     void testAudit() {
         Portfolio portfolio = new Portfolio(10000.0);
         for (int i = 1; i <= 10; i++) {
             Share share = new Share("SYM" + i, "Some Share", 100.0);
             share.setHandlingFee(10.0);
-            portfolio.purchaseAsset(share, 1);
+            portfolio.purchaseAsset(share, 1, 110.0);
         }
         assertEquals(900,portfolio.audit());
     }

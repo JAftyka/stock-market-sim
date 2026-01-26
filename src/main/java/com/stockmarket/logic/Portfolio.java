@@ -1,10 +1,13 @@
 package com.stockmarket.logic;
 
+import com.stockmarket.logic.InsufficientFundsException;
+import com.stockmarket.logic.InsufficientQuantityException;
 import com.stockmarket.domain.Asset;
 import com.stockmarket.domain.PurchaseLot;
 
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.Collection;
 
 public class Portfolio {
 
@@ -32,7 +35,7 @@ public class Portfolio {
     }
 
     /**
-     * Kupno aktywa — dodaje partię zakupową (FIFO)
+     * Kupno aktywa — używa logiki domenowej aktywa (polimorfizm).
      */
     public boolean purchaseAsset(Asset asset, int quantity, double unitPrice) {
         if (asset == null) {
@@ -45,35 +48,32 @@ public class Portfolio {
             throw new IllegalArgumentException("Unit price must be positive");
         }
 
-        double totalCost = quantity * unitPrice;
+        // koszt zakupu zależny od typu aktywa (akcje → prowizja, waluty → spread itd.)
+        double totalCost = asset.calculatePurchaseCost(quantity, unitPrice);
 
         if (totalCost > this.cash) {
-            throw new IllegalStateException("Insufficient cash to purchase asset");
+            throw new InsufficientFundsException("Not enough cash to purchase asset");
         }
 
-        // jeśli aktywo nie istnieje w portfelu → dodaj
         if (!symbolAssetMap.containsKey(asset.getSymbol())) {
             symbolAssetMap.put(asset.getSymbol(), asset);
         }
 
-        // dodaj partię zakupową FIFO
         asset.addLot(LocalDate.now(), quantity, unitPrice);
-
-        // odejmij gotówkę
         this.cash -= totalCost;
 
         return true;
     }
 
     /**
-     * Zwraca całkowitą ilość aktywa (sumę wszystkich partii)
+     * Zwraca całkowitą ilość aktywa (sumę wszystkich partii).
      */
-    public int getAssetQuantity(Asset asset) {
-        if (asset == null) {
-            throw new IllegalArgumentException("Asset cannot be null");
+    public int getAssetQuantity(String symbol) {
+        if (symbol == null) {
+            throw new IllegalArgumentException("Symbol cannot be null");
         }
 
-        Asset stored = symbolAssetMap.get(asset.getSymbol());
+        Asset stored = symbolAssetMap.get(symbol);
         if (stored == null) {
             return 0;
         }
@@ -86,11 +86,14 @@ public class Portfolio {
     }
 
     /**
-     * Redukuje ilość aktywa metodą FIFO — używane przy sprzedaży
+     * Sprzedaż aktywa metodą FIFO — zwraca P&L.
      */
-    public void reduceAssetQuantity(String symbol, int quantityToSell) {
+    public double sellAsset(String symbol, int quantityToSell, double sellPrice) {
         if (quantityToSell <= 0) {
             throw new IllegalArgumentException("Quantity must be positive");
+        }
+        if (sellPrice <= 0) {
+            throw new IllegalArgumentException("Sell price must be positive");
         }
 
         Asset asset = symbolAssetMap.get(symbol);
@@ -99,37 +102,43 @@ public class Portfolio {
         }
 
         int remaining = quantityToSell;
+        double totalProfit = 0.0;
 
         for (PurchaseLot lot : asset.getLotQueue()) {
             if (remaining == 0) break;
 
             int lotQty = lot.getQuantity();
+            int used = Math.min(lotQty, remaining);
 
-            if (lotQty <= remaining) {
-                // zużywamy całą partię
-                remaining -= lotQty;
-                lot.setQuantity(0);
-            } else {
-                // zużywamy część partii
-                lot.setQuantity(lotQty - remaining);
-                remaining = 0;
-            }
+            // zysk z tej partii
+            double profit = asset.calculateProfitFromLot(used, lot.getUnitPrice(), sellPrice);
+            totalProfit += profit;
+
+            // aktualizacja partii
+            lot.setQuantity(lotQty - used);
+            remaining -= used;
         }
 
         if (remaining > 0) {
-            throw new IllegalStateException("Not enough quantity to sell");
+            throw new InsufficientQuantityException("Not enough quantity to sell");
         }
 
-        // usuwamy puste partie
         asset.getLotQueue().removeEmptyLots();
+
+        // wpływ gotówki po sprzedaży (uwzględnia prowizję / spread)
+        double realRevenue = asset.calculateRealSaleValue(quantityToSell, sellPrice);
+        this.cash += realRevenue;
+
+        return totalProfit;
     }
 
     /**
-     * Wycena portfela
+     * Wycena portfela.
      */
     public double audit() {
         double sum = 0.0;
-        for (Asset asset : symbolAssetMap.values()) {
+        Collection<Asset> assets = symbolAssetMap.values();
+        for (Asset asset : assets) {
             sum += asset.calculateValueOfAllLots();
         }
         return sum;

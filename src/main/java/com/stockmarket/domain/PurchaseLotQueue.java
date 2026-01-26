@@ -22,7 +22,8 @@ public class PurchaseLotQueue implements Iterable<PurchaseLot> {
     public void removeEmptyLots() {
         Iterator<PurchaseLot> it = lots.iterator();
         while (it.hasNext()) {
-            if (it.next().isEmpty()) {
+            PurchaseLot lot = it.next();
+            if (lot.isEmpty()) {
                 it.remove();
             }
         }
@@ -34,6 +35,22 @@ public class PurchaseLotQueue implements Iterable<PurchaseLot> {
 
     public int size() {
         return lots.size();
+    }
+
+    public PurchaseLot getLotAt(int index) {
+        if (index < 0 || index >= lots.size()) {
+            throw new IndexOutOfBoundsException("Index out of range");
+        }
+
+        int i = 0;
+        for (PurchaseLot lot : lots) {
+            if (i == index) {
+                return lot;
+            }
+            i++;
+        }
+
+        throw new IndexOutOfBoundsException("Index out of range");
     }
 
     @Override
