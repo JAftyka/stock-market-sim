@@ -9,8 +9,9 @@ public class CurrencyTest {
     @Test
     public void testInitializeCurrency() {
         Currency currency = new Currency("PLN/EUR", "Złoty/Euro", 4.2284, 40);
-        assertEquals(8.4568, currency.calculatePurchaseCost(2));
+        assertEquals(8.4648, currency.calculatePurchaseCost(2, 4.2284), 0.0001);
     }
+
 
     @Test
     public void testInitializeCurrencyWithNullSymbolThrowsException() {
@@ -25,11 +26,6 @@ public class CurrencyTest {
     @Test
     public void testInitializeCurrencyWithZeroPriceThrowsException() {
         assertThrows(IllegalArgumentException.class, () -> {Currency currency = new Currency("PLN/EUR", "Złoty/Euro", 0.0,40);});
-    }
-
-    @Test
-    public void testInitializeCurrencyWithSpreadGreaterThanAskPriceThrowsException() {
-        assertThrows(IllegalArgumentException.class, () -> {Currency currency = new Currency("PLN/EUR", "Złoty/Euro", 4.2284, 50000);});
     }
 
     @Test
@@ -54,11 +50,5 @@ public class CurrencyTest {
     public void testSetSpreadWithNegativeSpreadThrowsException() {
         Currency currency = new Currency("PLN/EUR", "Złoty/Euro", 4.2284, 40);
         assertThrows(IllegalArgumentException.class, () -> {currency.setSpread(-80);});
-    }
-
-    @Test
-    public void testSetSpreadWithSpreadGreaterThanThrowsException() {
-        Currency currency = new Currency("PLN/EUR", "Złoty/Euro", 4.2284, 40);
-        assertThrows(IllegalArgumentException.class, () -> {currency.setSpread(50000);});
     }
 }

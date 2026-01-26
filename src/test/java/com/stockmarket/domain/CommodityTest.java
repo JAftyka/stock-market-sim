@@ -1,6 +1,7 @@
 package com.stockmarket.domain;
 
 import org.junit.jupiter.api.Test;
+
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -8,139 +9,139 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CommodityTest {
 
     @Test
-    public void testInitializeCommodityWithDefaultValues() {
-        Commodity commodity = new Commodity("Au", "Złoto", 200.0);
+    public void testDefaultConstructorInitializesValues() {
+        Commodity c = new Commodity("AU", "Gold", 200.0);
 
-        assertEquals("Au", commodity.getSymbol());
-        assertEquals("Złoto", commodity.getName());
-        assertEquals(200.0, commodity.getMarketPrice());
-        assertEquals(5.0, commodity.getStorageCostPerUnitPerDay());
-        assertEquals(20.0, commodity.getInitialStorageFeePerUnit());
+        assertEquals("AU", c.getSymbol());
+        assertEquals("Gold", c.getName());
+        assertEquals(200.0, c.getMarketPrice());
+        assertEquals(5.0, c.getStorageCostPerUnitPerDay());
+        assertEquals(20.0, c.getInitialStorageFeePerUnit());
     }
 
     @Test
-    public void testInitializeCommodityWithGivenValues() {
-        Commodity commodity = new Commodity("Au", "Złoto", 200.0, 2.0, 15.0);
+    public void testFullConstructorInitializesValues() {
+        Commodity c = new Commodity("AU", "Gold", 200.0, 3.0, 12.0);
 
-        assertEquals(2.0, commodity.getStorageCostPerUnitPerDay());
-        assertEquals(15.0, commodity.getInitialStorageFeePerUnit());
+        assertEquals(3.0, c.getStorageCostPerUnitPerDay());
+        assertEquals(12.0, c.getInitialStorageFeePerUnit());
     }
 
     @Test
-    public void testNullSymbolThrowsException() {
+    public void testConstructorThrowsOnZeroStorageCost() {
         assertThrows(IllegalArgumentException.class,
-                () -> new Commodity(null, "Złoto", 200.0));
+                () -> new Commodity("AU", "Gold", 200.0, 0.0, 10.0));
     }
 
     @Test
-    public void testNullNameThrowsException() {
+    public void testConstructorThrowsOnNegativeStorageCost() {
         assertThrows(IllegalArgumentException.class,
-                () -> new Commodity("Au", null, 200.0));
+                () -> new Commodity("AU", "Gold", 200.0, -1.0, 10.0));
     }
 
     @Test
-    public void testZeroMarketPriceThrowsException() {
+    public void testConstructorThrowsOnZeroInitialFee() {
         assertThrows(IllegalArgumentException.class,
-                () -> new Commodity("Au", "Złoto", 0.0));
+                () -> new Commodity("AU", "Gold", 200.0, 2.0, 0.0));
     }
 
     @Test
-    public void testNegativeMarketPriceThrowsException() {
+    public void testConstructorThrowsOnNegativeInitialFee() {
         assertThrows(IllegalArgumentException.class,
-                () -> new Commodity("Au", "Złoto", -10.0));
-    }
-
-    @Test
-    public void testZeroStorageCostThrowsException() {
-        assertThrows(IllegalArgumentException.class,
-                () -> new Commodity("Au", "Złoto", 200.0, 0.0, 10.0));
-    }
-
-    @Test
-    public void testNegativeStorageCostThrowsException() {
-        assertThrows(IllegalArgumentException.class,
-                () -> new Commodity("Au", "Złoto", 200.0, -5.0, 10.0));
-    }
-
-    @Test
-    public void testZeroInitialFeeThrowsException() {
-        assertThrows(IllegalArgumentException.class,
-                () -> new Commodity("Au", "Złoto", 200.0, 2.0, 0.0));
-    }
-
-    @Test
-    public void testNegativeInitialFeeThrowsException() {
-        assertThrows(IllegalArgumentException.class,
-                () -> new Commodity("Au", "Złoto", 200.0, 2.0, -10.0));
+                () -> new Commodity("AU", "Gold", 200.0, 2.0, -5.0));
     }
 
     @Test
     public void testSetStorageCostPerUnitPerDay() {
-        Commodity commodity = new Commodity("Au", "Złoto", 200.0);
-        commodity.setStorageCostPerUnitPerDay(7.5);
+        Commodity c = new Commodity("AU", "Gold", 200.0);
+        c.setStorageCostPerUnitPerDay(7.5);
 
-        assertEquals(7.5, commodity.getStorageCostPerUnitPerDay());
+        assertEquals(7.5, c.getStorageCostPerUnitPerDay());
     }
 
     @Test
-    public void testSetStorageCostPerUnitPerDayThrowsException() {
-        Commodity commodity = new Commodity("Au", "Złoto", 200.0);
+    public void testSetStorageCostPerUnitPerDayThrows() {
+        Commodity c = new Commodity("AU", "Gold", 200.0);
 
         assertThrows(IllegalArgumentException.class,
-                () -> commodity.setStorageCostPerUnitPerDay(0));
+                () -> c.setStorageCostPerUnitPerDay(0));
 
         assertThrows(IllegalArgumentException.class,
-                () -> commodity.setStorageCostPerUnitPerDay(-3));
+                () -> c.setStorageCostPerUnitPerDay(-3));
     }
 
     @Test
     public void testSetInitialStorageFeePerUnit() {
-        Commodity commodity = new Commodity("Au", "Złoto", 200.0);
-        commodity.setInitialStorageFeePerUnit(12.0);
+        Commodity c = new Commodity("AU", "Gold", 200.0);
+        c.setInitialStorageFeePerUnit(15.0);
 
-        assertEquals(12.0, commodity.getInitialStorageFeePerUnit());
+        assertEquals(15.0, c.getInitialStorageFeePerUnit());
     }
 
     @Test
-    public void testSetInitialStorageFeePerUnitThrowsException() {
-        Commodity commodity = new Commodity("Au", "Złoto", 200.0);
+    public void testSetInitialStorageFeePerUnitThrows() {
+        Commodity c = new Commodity("AU", "Gold", 200.0);
 
         assertThrows(IllegalArgumentException.class,
-                () -> commodity.setInitialStorageFeePerUnit(0));
+                () -> c.setInitialStorageFeePerUnit(0));
 
         assertThrows(IllegalArgumentException.class,
-                () -> commodity.setInitialStorageFeePerUnit(-5));
+                () -> c.setInitialStorageFeePerUnit(-10));
     }
 
     @Test
     public void testCalculateLotValue() {
-        Commodity commodity = new Commodity("Au", "Złoto", 200.0);
+        Commodity c = new Commodity("AU", "Gold", 200.0);
         PurchaseLot lot = new PurchaseLot(LocalDate.now(), 3, 150.0);
 
-        assertEquals(600.0, commodity.calculateLotValue(lot));
+        assertEquals(600.0, c.calculateLotValue(lot));
     }
 
     @Test
     public void testCalculateValueOfAllLots() {
-        Commodity commodity = new Commodity("Au", "Złoto", 200.0);
+        Commodity c = new Commodity("AU", "Gold", 200.0);
 
-        commodity.addLot(LocalDate.now(), 2, 150.0);
-        commodity.addLot(LocalDate.now(), 3, 160.0);
+        c.addLot(LocalDate.now(), 2, 150.0);
+        c.addLot(LocalDate.now(), 3, 160.0);
 
-        // 5 sztuk * 200 PLN
-        assertEquals(1000.0, commodity.calculateValueOfAllLots());
+        assertEquals(1000.0, c.calculateValueOfAllLots());
     }
 
     @Test
-    public void testCalculateStorageCostForLot() {
-        Commodity commodity = new Commodity("Au", "Złoto", 200.0, 2.0, 10.0);
+    public void testCalculatePurchaseCost() {
+        Commodity c = new Commodity("AU", "Gold", 200.0, 2.0, 10.0);
 
-        PurchaseLot lot = new PurchaseLot(LocalDate.now().minusDays(5), 4, 150.0);
+        // koszt = quantity * unitPrice + quantity * initialFee
+        // = 5 * 150 + 5 * 10 = 750 + 50 = 800
+        assertEquals(800.0, c.calculatePurchaseCost(5, 150.0));
+    }
 
-        // 5 dni * 2 zł * 4 szt = 40
+    @Test
+    public void testCalculateRealSaleValue() {
+        Commodity c = new Commodity("AU", "Gold", 200.0);
+
+        assertEquals(600.0, c.calculateRealSaleValue(3, 200.0));
+    }
+
+    @Test
+    public void testCalculateProfitFromLot() {
+        Commodity c = new Commodity("AU", "Gold", 200.0, 2.0, 10.0);
+
+        // dodajemy partię, żeby calculateStorageCost mogło ją znaleźć
+        LocalDate purchaseDate = LocalDate.now().minusDays(5);
+        c.addLot(purchaseDate, 4, 150.0);
+
+        // storage cost:
+        // days = 5
+        // daily cost = 5 dni * 2 zł * 4 szt = 40
         // initial fee = 4 * 10 = 40
-        // total = 80
-        assertEquals(80.0,
-                commodity.calculateStorageCostForLot(lot, LocalDate.now()));
+        // total storage = 80
+
+        // profit = (sellPrice - lotPrice) * quantity - storage
+        // = (200 - 150) * 4 - 80
+        // = 50 * 4 - 80
+        // = 200 - 80 = 120
+
+        assertEquals(120.0, c.calculateProfitFromLot(4, 150.0, 200.0));
     }
 }

@@ -30,24 +30,12 @@ public class Commodity extends Asset {
         this.initialStorageFeePerUnit = initialStorageFeePerUnit;
     }
 
-    public String getName() {
-        return super.getName();
-    }
-
-    public String getSymbol() {
-        return super.getSymbol();
-    }
-
     public double getInitialStorageFeePerUnit() {
         return this.initialStorageFeePerUnit;
     }
 
     public double getStorageCostPerUnitPerDay() {
         return this.storageCostPerUnitPerDay;
-    }
-
-    public double getMarketPrice() {
-        return super.getMarketPrice();
     }
 
     public void setInitialStorageFeePerUnit(double initialStorageFeePerUnit) {
@@ -76,20 +64,83 @@ public class Commodity extends Asset {
     public double calculateValueOfAllLots() {
         double sum = 0.0;
 
-        for (PurchaseLot lot : getLotQueue()) {
+        for (PurchaseLot lot : getLotDeque()) {
             sum += lot.getQuantity() * getMarketPrice();
         }
 
         return sum;
     }
 
-    public double calculateStorageCostForLot(PurchaseLot lot, LocalDate saleDate) {
-        long daysHeld = ChronoUnit.DAYS.between(lot.getPurchaseDate(), saleDate);
-        if (daysHeld < 0) {
-            throw new IllegalArgumentException("Sale date cannot be before purchase date");
+    @Override
+    public double calculatePurchaseCost(int quantity, double unitPrice) {
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Quantity must be positive");
+        }
+        if (unitPrice <= 0) {
+            throw new IllegalArgumentException("Unit price must be positive");
         }
 
-        return daysHeld * storageCostPerUnitPerDay * lot.getQuantity()
-                + lot.getQuantity() * initialStorageFeePerUnit;
+        // koszt zakupu = cena * ilość + opłata początkowa magazynowania
+        return quantity * unitPrice + quantity * initialStorageFeePerUnit;
+    }
+
+    @Override
+    public double calculateRealSaleValue(int quantity, double sellPrice) {
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Quantity must be positive");
+        }
+        if (sellPrice <= 0) {
+            throw new IllegalArgumentException("Sell price must be positive");
+        }
+
+        // sprzedaż towaru nie odejmuje storage cost
+        return quantity * sellPrice;
+    }
+
+    @Override
+    public double calculateProfitFromLot(int quantity, double lotUnitPrice, double sellPrice) {
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Quantity must be positive");
+        }
+
+        // UWAGA: Portfolio powinno przekazać datę sprzedaży
+        LocalDate saleDate = LocalDate.now();
+
+        // koszt magazynowania od zakupu do sprzedaży
+        double storageCost = calculateStorageCost(quantity, lotUnitPrice, saleDate);
+
+        // zysk = (cena sprzedaży - cena zakupu) * ilość - koszt magazynowania
+        return (sellPrice - lotUnitPrice) * quantity - storageCost;
+    }
+
+    private double calculateStorageCost(int quantity, double lotUnitPrice, LocalDate saleDate) {
+        // musimy znaleźć partię, żeby pobrać datę zakupu
+        // ale Portfolio przekazuje tylko lotUnitPrice, więc:
+        // → zakładamy, że data sprzedaży = dziś
+        // → a data zakupu jest w PurchaseLot (Portfolio ją zna)
+
+        // WERSJA PROSTA: storage liczone od zakupu do dziś
+        // (jeśli chcesz wersję z datą sprzedaży → Portfolio musi ją przekazać)
+
+        // Znajdujemy partię o tej cenie zakupu
+        PurchaseLot targetLot = null;
+        for (PurchaseLot lot : getLotDeque()) {
+            if (lot.getUnitPrice() == lotUnitPrice) {
+                targetLot = lot;
+                break;
+            }
+        }
+
+        if (targetLot == null) {
+            return 0.0; // nie powinno się zdarzyć
+        }
+
+        long daysHeld = ChronoUnit.DAYS.between(targetLot.getPurchaseDate(), saleDate);
+        if (daysHeld < 0) {
+            daysHeld = 0;
+        }
+
+        return daysHeld * storageCostPerUnitPerDay * quantity
+                + quantity * initialStorageFeePerUnit;
     }
 }

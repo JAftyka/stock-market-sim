@@ -3,6 +3,8 @@ package com.stockmarket.logic;
 import com.stockmarket.domain.Asset;
 import com.stockmarket.domain.Currency;
 import com.stockmarket.domain.Share;
+import com.stockmarket.exceptions.InsufficientFundsException;
+import com.stockmarket.exceptions.InsufficientQuantityException;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -68,7 +70,8 @@ class PortfolioTest {
         Portfolio portfolio = new Portfolio(10);
         Asset eur = new Currency("EUR", "Euro", 4.0, 300);
 
-        assertThrows(IllegalStateException.class, () -> portfolio.purchaseAsset(eur, 10, 4.0));
+        assertThrows(InsufficientFundsException.class,
+                () -> portfolio.purchaseAsset(eur, 10, 4.0));
     }
 
     @Test
@@ -83,7 +86,7 @@ class PortfolioTest {
     }
 
     @Test
-    void testReduceAssetQuantityFIFO() {
+    void testSellAssetReducesQuantityFIFO1() {
         Portfolio portfolio = new Portfolio(10000);
         Asset share = new Share("XYZ", "Test Share", 150);
 
@@ -92,26 +95,47 @@ class PortfolioTest {
         share.addLot(LocalDate.of(2023, 2, 1), 10, 120);
 
         // rejestrujemy aktywo w portfelu
-        portfolio.purchaseAsset(share, 1, 150); // 1 sztuka tylko po to, żeby dodać do mapy
-        share.getLotQueue().getLotAt(0).setQuantity(10); // przywracamy właściwe ilości
-        share.getLotQueue().getLotAt(1).setQuantity(10);
+        portfolio.purchaseAsset(share, 1, 150);
+        share.getLotDeque().getLotAt(0).setQuantity(10);
+        share.getLotDeque().getLotAt(1).setQuantity(10);
 
-        portfolio.reduceAssetQuantity("XYZ", 15);
+        portfolio.sellAsset("XYZ", 15, 200.0);
+        // pierwsza partia zeszła cała i została usunięta
 
-        assertEquals(0, share.getLotQueue().getLotAt(0).getQuantity());
-        assertEquals(5, share.getLotQueue().getLotAt(1).getQuantity());
+        assertEquals(5, share.getLotDeque().getLotAt(0).getQuantity());
     }
 
     @Test
-    void testReduceAssetQuantityThrowsWhenNotEnough() {
+    void testSellAssetReducesQuantityFIFO2() {
+        Portfolio portfolio = new Portfolio(10000);
+        Asset share = new Share("XYZ", "Test Share", 150);
+
+        // ręcznie dodajemy partie
+        share.addLot(LocalDate.of(2023, 1, 1), 10, 100);
+        share.addLot(LocalDate.of(2023, 2, 1), 10, 120);
+
+        // rejestrujemy aktywo w portfelu
+        portfolio.purchaseAsset(share, 1, 150);
+        share.getLotDeque().getLotAt(0).setQuantity(10);
+        share.getLotDeque().getLotAt(1).setQuantity(10);
+
+        portfolio.sellAsset("XYZ", 15, 200.0);
+        // pierwsza partia zeszła cała i została usunięta
+
+        assertEquals(1, share.getLotDeque().getLotAt(1).getQuantity());
+    }
+
+    @Test
+    void testSellAssetThrowsWhenNotEnoughQuantity() {
         Portfolio portfolio = new Portfolio(10000);
         Asset share = new Share("XYZ", "Test Share", 150);
 
         share.addLot(LocalDate.now(), 5, 100);
         portfolio.purchaseAsset(share, 1, 150);
-        share.getLotQueue().getLotAt(0).setQuantity(5);
+        share.getLotDeque().getLotAt(0).setQuantity(5);
 
-        assertThrows(IllegalStateException.class, () -> portfolio.reduceAssetQuantity("XYZ", 10));
+        assertThrows(InsufficientQuantityException.class,
+                () -> portfolio.sellAsset("XYZ", 10, 200.0));
     }
 
     @Test
@@ -127,10 +151,10 @@ class PortfolioTest {
         Asset eur = new Currency("EUR", "Euro", 5.0, 300);
         Asset share = new Share("ABC", "Company ABC", 100);
 
-        portfolio.purchaseAsset(eur, 10, 5.0);   // wartość 50
-        portfolio.purchaseAsset(share, 2, 100);  // wartość 200
+        portfolio.purchaseAsset(eur, 10, 5.0);   // wartość 10 * bidPrice
+        portfolio.purchaseAsset(share, 2, 100);  // wartość 2 * 100
 
-        double expected = 50 + 200;
+        double expected = eur.calculateValueOfAllLots() + share.calculateValueOfAllLots();
         assertEquals(expected, portfolio.audit(), 0.0001);
     }
 }

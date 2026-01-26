@@ -4,7 +4,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
 
-public class PurchaseLotQueue implements Iterable<PurchaseLot> {
+public class PurchaseLotDeque implements Iterable<PurchaseLot> {
 
     private final Deque<PurchaseLot> lots = new ArrayDeque<>();
 
@@ -19,6 +19,10 @@ public class PurchaseLotQueue implements Iterable<PurchaseLot> {
         return lots.pollFirst(); // FIFO
     }
 
+    public PurchaseLot peekFirst() {
+        return lots.peekFirst();
+    }
+
     public void removeEmptyLots() {
         Iterator<PurchaseLot> it = lots.iterator();
         while (it.hasNext()) {
@@ -27,6 +31,10 @@ public class PurchaseLotQueue implements Iterable<PurchaseLot> {
                 it.remove();
             }
         }
+    }
+
+    public void clear() {
+        lots.clear();
     }
 
     public boolean isEmpty() {

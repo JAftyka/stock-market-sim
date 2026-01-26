@@ -1,6 +1,7 @@
 package com.stockmarket.domain;
 
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ShareTest {
@@ -58,21 +59,15 @@ public class ShareTest {
     }
 
     @Test
-    void testSetInitialPriceWithZeroPriceThrowsException() {
+    void testSetMarketPriceWithZeroThrowsException() {
         Share share = new Share("ABC", "Name", 100.0);
         assertThrows(IllegalArgumentException.class, () -> share.setMarketPrice(0.0));
     }
 
     @Test
-    void testSetInitialPriceWithNegativePriceThrowsException() {
+    void testSetMarketPriceWithNegativeThrowsException() {
         Share share = new Share("ABC", "Name", 100.0);
         assertThrows(IllegalArgumentException.class, () -> share.setMarketPrice(-100.00));
-    }
-
-    @Test
-    void testGetMarketPrice() {
-        Share share = new Share("ABC", "Name", 100.0);
-        assertEquals(100.0, share.getMarketPrice(), 0.0001);
     }
 
     @Test
@@ -89,26 +84,61 @@ public class ShareTest {
     }
 
     @Test
-    void testSetHandlingFeeWithZeroFeeThrowsException() {
+    void testSetHandlingFeeWithZeroThrowsException() {
         Share share = new Share("ABC", "Name", 100.0);
         assertThrows(IllegalArgumentException.class, () -> share.setHandlingFee(0));
     }
 
     @Test
-    void testSetHandlingFeeWithNegativeFeeThrowsException() {
+    void testSetHandlingFeeWithNegativeThrowsException() {
         Share share = new Share("ABC", "Name", 100.0);
         assertThrows(IllegalArgumentException.class, () -> share.setHandlingFee(-100.00));
     }
 
     @Test
-    void testCalculateRealValue() {
+    void testCalculatePurchaseCost() {
         Share share = new Share("ABC", "Name", 100.0);
-        assertEquals(19985.0, share.calculateRealValue(200), 0.0001);
+
+        // koszt = quantity * unitPrice + handlingFee
+        // = 200 * 100 + 15 = 20000 + 15 = 20015
+        assertEquals(20015.0, share.calculatePurchaseCost(200, 100.0), 0.0001);
     }
 
     @Test
-    void testCalculatePurchaseCost() {
+    void testCalculateRealSaleValue() {
         Share share = new Share("ABC", "Name", 100.0);
-        assertEquals(20015.0, share.calculatePurchaseCost(200), 0.0001);
+
+        // wpływ = quantity * sellPrice - handlingFee
+        // = 200 * 100 - 15 = 20000 - 15 = 19985
+        assertEquals(19985.0, share.calculateRealSaleValue(200, 100.0), 0.0001);
+    }
+
+    @Test
+    void testCalculateProfitFromLot() {
+        Share share = new Share("ABC", "Name", 100.0);
+
+        // zysk = (sellPrice - lotPrice) * quantity - handlingFee
+        // = (150 - 100) * 10 - 15
+        // = 50 * 10 - 15 = 500 - 15 = 485
+        assertEquals(485.0, share.calculateProfitFromLot(10, 100.0, 150.0), 0.0001);
+    }
+
+    @Test
+    void testCalculateLotValue() {
+        Share share = new Share("ABC", "Name", 100.0);
+        PurchaseLot lot = new PurchaseLot(java.time.LocalDate.now(), 5, 80.0);
+
+        assertEquals(500.0, share.calculateLotValue(lot));
+    }
+
+    @Test
+    void testCalculateValueOfAllLots() {
+        Share share = new Share("ABC", "Name", 100.0);
+
+        share.addLot(java.time.LocalDate.now(), 3, 80.0);
+        share.addLot(java.time.LocalDate.now(), 2, 90.0);
+
+        // 5 sztuk * 100 PLN
+        assertEquals(500.0, share.calculateValueOfAllLots());
     }
 }

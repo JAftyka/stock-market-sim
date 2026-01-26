@@ -20,24 +20,40 @@ public class Share extends Asset {
         this.handlingFee = handlingFee;
     }
 
-    /**
-     * Koszt zakupu akcji (np. prowizja maklerska)
-     */
-    public double calculatePurchaseCost(int quantity) {
+    @Override
+    public double calculatePurchaseCost(int quantity, double unitPrice) {
         if (quantity <= 0) {
             throw new IllegalArgumentException("Quantity must be positive");
         }
-        return quantity * getMarketPrice() + handlingFee;
+        if (unitPrice <= 0) {
+            throw new IllegalArgumentException("Unit price must be positive");
+        }
+
+        // koszt zakupu = cena * ilość + prowizja maklerska
+        return quantity * unitPrice + handlingFee;
     }
 
-    /**
-     * Wartość sprzedaży po odjęciu prowizji
-     */
-    public double calculateRealValue(int quantity) {
+    @Override
+    public double calculateRealSaleValue(int quantity, double sellPrice) {
         if (quantity <= 0) {
             throw new IllegalArgumentException("Quantity must be positive");
         }
-        return quantity * getMarketPrice() - handlingFee;
+        if (sellPrice <= 0) {
+            throw new IllegalArgumentException("Sell price must be positive");
+        }
+
+        // wpływ gotówki = cena sprzedaży * ilość - prowizja
+        return quantity * sellPrice - handlingFee;
+    }
+
+    @Override
+    public double calculateProfitFromLot(int quantity, double lotUnitPrice, double sellPrice) {
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Quantity must be positive");
+        }
+
+        // zysk = (cena sprzedaży - cena zakupu) * ilość - prowizja
+        return (sellPrice - lotUnitPrice) * quantity - handlingFee;
     }
 
     @Override
@@ -52,7 +68,7 @@ public class Share extends Asset {
     public double calculateValueOfAllLots() {
         double sum = 0.0;
 
-        for (PurchaseLot lot : getLotQueue()) {
+        for (PurchaseLot lot : getLotDeque()) {
             sum += lot.getQuantity() * getMarketPrice();
         }
 

@@ -2,8 +2,8 @@ package com.stockmarket.logic;
 
 import com.stockmarket.domain.Asset;
 import com.stockmarket.domain.PurchaseLot;
-import com.stockmarket.exception.InsufficientFundsException;
-import com.stockmarket.exception.InsufficientQuantityException;
+import com.stockmarket.exceptions.InsufficientFundsException;
+import com.stockmarket.exceptions.InsufficientQuantityException;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -79,10 +79,14 @@ public class Portfolio {
         }
 
         int total = 0;
-        for (PurchaseLot lot : stored.getLotQueue()) {
+        for (PurchaseLot lot : stored.getLotDeque()) {
             total += lot.getQuantity();
         }
         return total;
+    }
+
+    public Collection<Asset> getAllAssets() {
+        return symbolAssetMap.values();
     }
 
     /**
@@ -104,7 +108,7 @@ public class Portfolio {
         int remaining = quantityToSell;
         double totalProfit = 0.0;
 
-        for (PurchaseLot lot : asset.getLotQueue()) {
+        for (PurchaseLot lot : asset.getLotDeque()) {
             if (remaining == 0) break;
 
             int lotQty = lot.getQuantity();
@@ -123,7 +127,7 @@ public class Portfolio {
             throw new InsufficientQuantityException("Not enough quantity to sell");
         }
 
-        asset.getLotQueue().removeEmptyLots();
+        asset.getLotDeque().removeEmptyLots();
 
         // wpływ gotówki po sprzedaży (uwzględnia prowizję / spread)
         double realRevenue = asset.calculateRealSaleValue(quantityToSell, sellPrice);
@@ -132,9 +136,13 @@ public class Portfolio {
         return totalProfit;
     }
 
-    /**
-     * Wycena portfela.
-     */
+    public void registerLoadedAsset(Asset asset) {
+        if (asset == null) {
+            throw new IllegalArgumentException("Asset cannot be null");
+        }
+        symbolAssetMap.put(asset.getSymbol(), asset);
+    }
+
     public double audit() {
         double sum = 0.0;
         Collection<Asset> assets = symbolAssetMap.values();
