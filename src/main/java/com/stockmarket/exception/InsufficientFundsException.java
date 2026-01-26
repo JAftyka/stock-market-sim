@@ -1,4 +1,4 @@
-package com.stockmarket.logic;
+package com.stockmarket.exception;
 
 public class InsufficientFundsException extends RuntimeException {
     public InsufficientFundsException(String message) {

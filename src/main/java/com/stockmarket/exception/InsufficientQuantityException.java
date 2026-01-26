@@ -1,4 +1,4 @@
-package com.stockmarket.logic;
+package com.stockmarket.exception;
 
 public class InsufficientQuantityException extends RuntimeException {
     public InsufficientQuantityException(String message) {

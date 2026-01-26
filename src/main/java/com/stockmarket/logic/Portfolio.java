@@ -1,9 +1,9 @@
 package com.stockmarket.logic;
 
-import com.stockmarket.logic.InsufficientFundsException;
-import com.stockmarket.logic.InsufficientQuantityException;
 import com.stockmarket.domain.Asset;
 import com.stockmarket.domain.PurchaseLot;
+import com.stockmarket.exception.InsufficientFundsException;
+import com.stockmarket.exception.InsufficientQuantityException;
 
 import java.time.LocalDate;
 import java.util.HashMap;
