@@ -23,19 +23,19 @@ public abstract class Asset {
         this.lotStack = new PurchaseLotDeque();
     }
 
-    /** Wartość pojedynczej partii (np. spread, fee, itp.) */
+    // Wartość pojedynczej partii
     public abstract double calculateLotValue(PurchaseLot lot);
 
-    /** Wartość wszystkich partii aktywa */
+    // Wartość wszystkich partii aktywa
     public abstract double calculateValueOfAllLots();
 
-    /** Koszt zakupu aktywa (akcje → prowizja, waluty → spread) */
+    // Koszt zakupu aktywa (akcje → prowizja, waluty → spread
     public abstract double calculatePurchaseCost(int quantity, double unitPrice);
 
-    /** Realny wpływ gotówki przy sprzedaży (po prowizji/spreadzie) */
+    // Realny wpływ gotówki przy sprzedaży (po prowizji/spreadzie)
     public abstract double calculateRealSaleValue(int quantity, double sellPrice);
 
-    /** Zysk z danej partii przy sprzedaży FIFO */
+    // Zysk z danej partii przy sprzedaży FIFO
     public abstract double calculateProfitFromLot(int quantity, double lotUnitPrice, double sellPrice);
 
     public String getSymbol() {
